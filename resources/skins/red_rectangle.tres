@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="SkinResource" format=3 uid="uid://b6efxodbv4rea"]
+
+[ext_resource type="Script" uid="uid://liq1hojpymqw" path="res://resources/skins/skin_template.gd" id="1_ddjbt"]
+[ext_resource type="Texture2D" uid="uid://vfutjs83f67o" path="res://assets/spritesheet_retina.png" id="2_0014h"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cq26g"]
+atlas = ExtResource("2_0014h")
+region = Rect2(1176, 128, 80, 128)
+
+[resource]
+script = ExtResource("1_ddjbt")
+skin = SubResource("AtlasTexture_cq26g")
+metadata/_custom_type_script = "uid://liq1hojpymqw"

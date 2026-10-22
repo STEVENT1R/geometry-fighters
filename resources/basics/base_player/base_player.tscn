@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://jfotokj7wce7"]
+
+[ext_resource type="Texture2D" uid="uid://vfutjs83f67o" path="res://assets/spritesheet_retina.png" id="1_7gm5u"]
+
+[node name="base_player" type="CharacterBody2D" unique_id=2015537908]
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1180797234]
+texture = ExtResource("1_7gm5u")
+region_enabled = true
+region_rect = Rect2(1176, 0, 80, 128)
