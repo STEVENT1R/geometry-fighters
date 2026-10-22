@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cowp7ppipl7ue"
-path="res://.godot/imported/tilesheet-double.png-91490d2841a24dc0232614c4ab377cdf.ctex"
+uid="uid://bctrnd7xhcms7"
+path="res://.godot/imported/button_rectangle_depth_line.png-f4b63c3efc0705960fa693eebfcdb553.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/tilesheet-double.png"
-dest_files=["res://.godot/imported/tilesheet-double.png-91490d2841a24dc0232614c4ab377cdf.ctex"]
+source_file="res://assets/UI/Grey/Double/button_rectangle_depth_line.png"
+dest_files=["res://.godot/imported/button_rectangle_depth_line.png-f4b63c3efc0705960fa693eebfcdb553.ctex"]
 
 [params]
 
