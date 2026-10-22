@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://2lhbvxrognu4"]
 
 [ext_resource type="Texture2D" uid="uid://deipt2a7q0q7f" path="res://assets/game_designs/logo.png" id="1_pq8uq"]
+[ext_resource type="Script" uid="uid://ueais7kosxhb" path="res://main_scenes/main_menu/main_menu.gd" id="1_y8l6a"]
 
 [node name="main_menu" type="Control" unique_id=794540857]
 layout_mode = 3
@@ -9,6 +10,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_y8l6a")
 
 [node name="Logo" type="TextureRect" parent="." unique_id=643745104]
 layout_mode = 1
@@ -117,3 +119,5 @@ theme_override_font_sizes/font_size = 60
 text = "Exit"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[connection signal="pressed" from="play" to="." method="_on_play_pressed"]

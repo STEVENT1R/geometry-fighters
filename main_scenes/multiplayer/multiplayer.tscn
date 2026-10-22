@@ -1,0 +1,154 @@
+[gd_scene format=3 uid="uid://4gtmp8n1qi4"]
+
+[ext_resource type="Texture2D" uid="uid://deipt2a7q0q7f" path="res://assets/game_designs/logo.png" id="1_eyd21"]
+[ext_resource type="Script" uid="uid://cs4kyfjx3artq" path="res://main_scenes/multiplayer/multiplayer.gd" id="1_hdhpl"]
+
+[node name="multiplayer" type="Control" unique_id=1062166024]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_hdhpl")
+
+[node name="Logo" type="TextureRect" parent="." unique_id=1804482093]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -266.1004
+offset_right = 266.1006
+offset_bottom = 266.101
+grow_horizontal = 2
+texture = ExtResource("1_eyd21")
+expand_mode = 1
+
+[node name="title" type="RichTextLabel" parent="." unique_id=289214315]
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = -97.119995
+offset_bottom = 52.919983
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/normal_font_size = 80
+bbcode_enabled = true
+text = "[wave]Multiplayer"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="local" type="Button" parent="." unique_id=82353475]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -284.0204
+offset_top = 67.01697
+offset_right = -6.651367
+offset_bottom = 148.01196
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="text" type="Label" parent="local" unique_id=104223579]
+layout_mode = 0
+offset_top = 2.0
+offset_right = 277.17432
+offset_bottom = 69.428604
+theme_override_font_sizes/font_size = 60
+text = "Local"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="online" type="Button" parent="." unique_id=1497380442]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 10.263794
+offset_top = 67.01697
+offset_right = 287.6328
+offset_bottom = 148.01196
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="text" type="Label" parent="online" unique_id=804739884]
+layout_mode = 0
+offset_top = 2.0
+offset_right = 277.17432
+offset_bottom = 69.428604
+theme_override_font_sizes/font_size = 60
+text = "Online"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="soon" type="Label" parent="online" unique_id=1873533183]
+layout_mode = 0
+offset_left = 208.86555
+offset_top = 48.835453
+offset_right = 304.86554
+offset_bottom = 108.83545
+rotation = -0.2617994
+text = "soon"
+
+[node name="vs_bots" type="Button" parent="." unique_id=1318166221]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -137.61035
+offset_top = 168.03986
+offset_right = 139.75867
+offset_bottom = 249.03485
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="text" type="Label" parent="vs_bots" unique_id=293422550]
+layout_mode = 0
+offset_top = 2.0
+offset_right = 277.17432
+offset_bottom = 69.428604
+theme_override_font_sizes/font_size = 60
+text = "VS Bots"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="soon" type="Label" parent="vs_bots" unique_id=988209213]
+layout_mode = 0
+offset_left = 211.11946
+offset_top = 55.597294
+offset_right = 307.11945
+offset_bottom = 115.59729
+rotation = -0.2617994
+text = "soon"
+
+[node name="back" type="Button" parent="." unique_id=470903902]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 21.0
+offset_top = -91.994995
+offset_right = 198.36902
+offset_bottom = -11.0
+grow_vertical = 0
+
+[node name="text" type="Label" parent="back" unique_id=1453635811]
+layout_mode = 0
+offset_top = 2.0
+offset_right = 177.47128
+offset_bottom = 69.428604
+theme_override_font_sizes/font_size = 60
+text = "Back"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[connection signal="pressed" from="back" to="." method="_on_back_pressed"]
