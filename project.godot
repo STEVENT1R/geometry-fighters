@@ -8,12 +8,20 @@
 
 config_version=5
 
+[GD-Sync]
+
+version="1.0.2"
+
 [application]
 
 config/name="Geometry Fighters"
 run/main_scene="uid://2lhbvxrognu4"
 config/features=PackedStringArray("4.8", "GL Compatibility")
 config/icon="res://icon.svg"
+
+[autoload]
+
+GDSync="*res://addons/GD-Sync/MultiplayerClient.gd"
 
 [display]
 
@@ -22,9 +30,14 @@ window/size/viewport_height=720
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/GD-Sync/plugin.cfg")
+
 [file_customization]
 
 folder_colors={
+"res://addons/": "gray",
 "res://assets/": "orange",
 "res://assets/UI/": "green",
 "res://assets/game_designs/": "yellow",
