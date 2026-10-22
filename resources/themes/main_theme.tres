@@ -1,0 +1,53 @@
+[gd_resource type="Theme" format=3 uid="uid://dx882i3m23ld2"]
+
+[ext_resource type="Texture2D" uid="uid://5d81xeau1h1s" path="res://assets/UI/Grey/Double/button_rectangle_depth_gloss.png" id="1_x2ak3"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_i4ejt"]
+load_path = "res://.godot/imported/button_rectangle_depth_gloss.png-450cae57b34fd54c9ab778fd95f3797a.ctex"
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_yjg5f"]
+texture = SubResource("CompressedTexture2D_i4ejt")
+texture_margin_left = 15.0
+texture_margin_top = 15.0
+texture_margin_right = 15.0
+texture_margin_bottom = 25.0
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_0wthw"]
+load_path = "res://.godot/imported/button_rectangle_depth_gloss.png-450cae57b34fd54c9ab778fd95f3797a.ctex"
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_dagba"]
+texture = SubResource("CompressedTexture2D_0wthw")
+texture_margin_left = 15.0
+texture_margin_top = 15.0
+texture_margin_right = 15.0
+texture_margin_bottom = 25.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_pq8uq"]
+texture = ExtResource("1_x2ak3")
+texture_margin_left = 15.0
+texture_margin_top = 15.0
+texture_margin_right = 15.0
+texture_margin_bottom = 25.0
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_xtbu8"]
+load_path = "res://.godot/imported/button_rectangle_depth_gloss.png-450cae57b34fd54c9ab778fd95f3797a.ctex"
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_hf3i3"]
+texture = SubResource("CompressedTexture2D_xtbu8")
+texture_margin_left = 15.0
+texture_margin_top = 15.0
+texture_margin_right = 15.0
+texture_margin_bottom = 25.0
+
+[resource]
+Button/styles/disabled = SubResource("StyleBoxTexture_yjg5f")
+Button/styles/hover = SubResource("StyleBoxTexture_dagba")
+Button/styles/normal = SubResource("StyleBoxTexture_pq8uq")
+Button/styles/pressed = SubResource("StyleBoxTexture_hf3i3")
+Label/colors/font_outline_color = Color(0, 0, 0, 1)
+Label/colors/font_shadow_color = Color(0, 0, 0, 1)
+Label/constants/outline_size = 18
+Label/constants/shadow_offset_x = 4
+Label/constants/shadow_offset_y = 4
+Label/constants/shadow_outline_size = 1
+Label/font_sizes/font_size = 60
