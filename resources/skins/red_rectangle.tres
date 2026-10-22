@@ -3,11 +3,19 @@
 [ext_resource type="Script" uid="uid://liq1hojpymqw" path="res://resources/skins/skin_template.gd" id="1_ddjbt"]
 [ext_resource type="Texture2D" uid="uid://vfutjs83f67o" path="res://assets/spritesheet_retina.png" id="2_0014h"]
 
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_0014h"]
+load_path = "res://.godot/imported/spritesheet_retina.png-9375fc45d57c127e93f023ac4f88d399.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hrq6i"]
+atlas = SubResource("CompressedTexture2D_0014h")
+region = Rect2(1192, 1192, 48, 48)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_cq26g"]
 atlas = ExtResource("2_0014h")
-region = Rect2(1176, 128, 80, 128)
+region = Rect2(1168, 128, 96, 128)
 
 [resource]
 script = ExtResource("1_ddjbt")
 skin = SubResource("AtlasTexture_cq26g")
+hand = SubResource("AtlasTexture_hrq6i")
 metadata/_custom_type_script = "uid://liq1hojpymqw"

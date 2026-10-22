@@ -46,3 +46,4 @@ rendering_device/driver.windows="d3d12"
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
 lights_and_shadows/multi_bounce_occlusion/enabled=true
+environment/defaults/default_clear_color=Color(0.80049086, 0.8004908, 0.8004906, 1)

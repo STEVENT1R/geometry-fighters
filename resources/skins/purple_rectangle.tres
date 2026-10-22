@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="SkinResource" format=3 uid="uid://bgnjhemmd3sex"]
+
+[ext_resource type="Script" uid="uid://liq1hojpymqw" path="res://resources/skins/skin_template.gd" id="1_yq6id"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_aq2gy"]
+load_path = "res://.godot/imported/spritesheet_retina.png-9375fc45d57c127e93f023ac4f88d399.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_65205"]
+atlas = SubResource("CompressedTexture2D_aq2gy")
+region = Rect2(1320, 40, 48, 48)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_yq6id"]
+load_path = "res://.godot/imported/spritesheet_retina.png-9375fc45d57c127e93f023ac4f88d399.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_b0we1"]
+atlas = SubResource("CompressedTexture2D_yq6id")
+region = Rect2(1168, 256, 96, 128)
+
+[resource]
+script = ExtResource("1_yq6id")
+skin = SubResource("AtlasTexture_b0we1")
+hand = SubResource("AtlasTexture_65205")
+metadata/_custom_type_script = "uid://liq1hojpymqw"

@@ -1,10 +1,200 @@
 [gd_scene format=3 uid="uid://jfotokj7wce7"]
 
+[ext_resource type="Script" uid="uid://dpm8kfskagb3b" path="res://resources/basics/base_player/base_player.gd" id="1_1k8ur"]
 [ext_resource type="Texture2D" uid="uid://vfutjs83f67o" path="res://assets/spritesheet_retina.png" id="1_7gm5u"]
 
-[node name="base_player" type="CharacterBody2D" unique_id=2015537908]
+[sub_resource type="AtlasTexture" id="AtlasTexture_7gm5u"]
+atlas = ExtResource("1_7gm5u")
+region = Rect2(1168, 128, 96, 128)
 
-[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1180797234]
-texture = ExtResource("1_7gm5u")
-region_enabled = true
+[sub_resource type="AtlasTexture" id="AtlasTexture_8a8pi"]
+atlas = ExtResource("1_7gm5u")
+region = Rect2(1192, 1192, 48, 48)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_1k8ur"]
+load_path = "res://.godot/imported/spritesheet_retina.png-9375fc45d57c127e93f023ac4f88d399.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_65205"]
+atlas = SubResource("CompressedTexture2D_1k8ur")
+region = Rect2(1192, 1192, 48, 48)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hrq6i"]
+size = Vector2(40.468216, 63.310272)
+
+[sub_resource type="Animation" id="Animation_gc6tf"]
+length = 0.001
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("skin:scale:x")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(0.5, -0.0005, 0, 0.0005, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/1/type = "bezier"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("skin:scale:y")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(0.5, -0.0005, 0, 0.0005, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/2/type = "bezier"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("skin/first_hand:position:x")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(68.59929, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/3/type = "bezier"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("skin/first_hand:position:y")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(-49.98757, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/4/type = "bezier"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("skin/second_hand:position:x")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(-73.11226, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/5/type = "bezier"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("skin/second_hand:position:y")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(-46.334183, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+
+[sub_resource type="Animation" id="Animation_1k8ur"]
+resource_name = "idle"
+loop_mode = 1
+step = 0.1
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("skin:scale:x")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0, 2, 2),
+"points": PackedFloat32Array(0.5, -0.0005, 0, 0.0005, 0, 0.5, -0.16666667, 0, 0, 0, 0.5, -0.16666667, 0, 0, 0),
+"times": PackedFloat32Array(0, 0.5, 1)
+}
+tracks/1/type = "bezier"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("skin:scale:y")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"handle_modes": PackedInt32Array(0, 2, 2),
+"points": PackedFloat32Array(0.5, -0.0005, 0, 0.0005, 0, 0.48, -0.16666667, 0.0033333353, 0, 0, 0.5, -0.16666667, -0.0033333353, 0, 0),
+"times": PackedFloat32Array(0, 0.5, 1)
+}
+tracks/2/type = "bezier"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("skin/first_hand:position:x")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"handle_modes": PackedInt32Array(0, 2, 0),
+"points": PackedFloat32Array(68.5, -0.25, 0, 0.25, 0, 68.5, -0.083333336, 4.83195e-05, 0, 0, 68.5, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 0.5, 1)
+}
+tracks/3/type = "bezier"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("skin/first_hand:position:y")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"handle_modes": PackedInt32Array(0, 2, 0),
+"points": PackedFloat32Array(-50, -0.25, 0, 0.25, 0, -45, -0.083333336, -0.831262, 0, 0, -50, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 0.5, 1)
+}
+tracks/4/type = "bezier"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("skin/second_hand:position:x")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"handle_modes": PackedInt32Array(0, 0, 0),
+"points": PackedFloat32Array(-73, -0.25, 0, 0.25, 0, -73, -0.25, 0, 0.25, 0, -73, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 0.5, 1)
+}
+tracks/5/type = "bezier"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("skin/second_hand:position:y")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"handle_modes": PackedInt32Array(0, 2, 0),
+"points": PackedFloat32Array(-50, -0.25, 0, 0.25, 0, -45, -0.083333336, -0.831262, 0, 0, -50, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 0.5, 1)
+}
+
+[sub_resource type="Animation" id="Animation_anuaf"]
+resource_name = "right"
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_gc6tf"]
+_data = {
+&"RESET": SubResource("Animation_gc6tf"),
+&"idle": SubResource("Animation_1k8ur"),
+&"right": SubResource("Animation_anuaf")
+}
+
+[node name="base_player" type="CharacterBody2D" unique_id=2015537908]
+script = ExtResource("1_1k8ur")
+
+[node name="skin" type="Sprite2D" parent="." unique_id=1180797234]
+position = Vector2(0, 27.523926)
+scale = Vector2(0.5, 0.5)
+texture = SubResource("AtlasTexture_7gm5u")
+offset = Vector2(0, -60)
 region_rect = Rect2(1176, 0, 80, 128)
+
+[node name="first_hand" type="Sprite2D" parent="skin" unique_id=958348560]
+position = Vector2(68.59929, -49.98757)
+texture = SubResource("AtlasTexture_8a8pi")
+
+[node name="second_hand" type="Sprite2D" parent="skin" unique_id=170879632]
+position = Vector2(-73.11226, -46.334183)
+texture = SubResource("AtlasTexture_65205")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1904013703]
+visible = false
+position = Vector2(0.116241455, -0.4320221)
+shape = SubResource("RectangleShape2D_hrq6i")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=709719803]
+
+[node name="movement" type="AnimationPlayer" parent="." unique_id=2039958831]
+libraries/ = SubResource("AnimationLibrary_gc6tf")
