@@ -2,20 +2,24 @@ extends CharacterBody2D
 
 # --- الثوابت (Constants) ---
 const SPEED = 350.0
-const JUMP_VELOCITY = -400.0
+const JUMP_VELOCITY = -550.0            # قوة النطة العادية
 const SKINS_PATH := "res://resources/skins/"
 
-# --- إعدادات النعومة والانزلاق ---
-const ACCELERATION = 1500.0     
-const FRICTION = 4000.0         
-const AIR_ACCELERATION = 800.0  
-const AIR_FRICTION = 500.0      
+# ✅ إعدادات التسارع (بدون احتكاك)
+# التسارع ده بيستخدم للحركة وللفرملة (الوقوف)
+const ACCELERATION = 3500.0       
+const AIR_ACCELERATION = 2000.0   
+
+# --- إعدادات القفز ---
+@export var max_jumps: int = 2   # 2 تعني دابل جامب
+var jumps_made: int = 0
+
+# --- إعدادات وقت السماح بالنطة بعد السقوط (Coyote Time) ---
+@export var coyote_time_max: float = 0.15 
+var coyote_time_left: float = 0.0
 
 # --- المتغيرات (Variables) ---
 @export var current_skin: String = "red_rectangle"
-
-var is_jumping: bool = false
-var jump_force_applied: bool = false
 
 # --- العقد (Nodes) ---
 @onready var movement_animation = $movement
@@ -59,9 +63,7 @@ func apply_skin(skin_name: String) -> void:
 	current_skin = skin_name
 
 
-# دالة جديدة لعمل انتقال ناعم بين الأنيميشنز
 func change_animation(anim_name: String, blend_time: float = 0.15) -> void:
-	# بنتأكد إن الأنيميشن المطلوب مختلف عن اللي شغال حالياً عشان منقطعش الدمج
 	if movement_animation.current_animation != anim_name:
 		movement_animation.play(anim_name, blend_time)
 
@@ -70,40 +72,41 @@ func _physics_process(delta: float) -> void:
 	# --- 1. الجاذبية وإعادة ضبط الحالة ---
 	if not is_on_floor():
 		velocity += get_gravity() * delta
+		coyote_time_left -= delta
 	else:
-		if is_jumping and jump_force_applied:
-			is_jumping = false
-			jump_force_applied = false
+		coyote_time_left = coyote_time_max
+		jumps_made = 0 
 
-	# --- 2. استقبال أمر القفز ---
-	if Input.is_action_just_pressed("ui_accept") and is_on_floor() and not is_jumping:
-		is_jumping = true
-		jump_force_applied = false
-		# استخدمنا الدالة الجديدة هنا مع وقت دمج سريع (0.05) عشان النطة تبان فورية
-		change_animation("jump", 0.05)
-
-	# --- 3. تطبيق قوة القفز ---
-	if is_jumping and not jump_force_applied:
-		if movement_animation.current_animation == "jump" and movement_animation.current_animation_position >= 0.01:
+	# --- 2. استقبال أمر القفز (عادي + دابل جامب) ---
+	if Input.is_action_just_pressed("ui_accept"):
+		var can_ground_jump = is_on_floor() or coyote_time_left > 0.0
+		
+		if can_ground_jump and jumps_made == 0:
+			# النطة العادية
+			jumps_made = 1
+			coyote_time_left = 0.0
 			velocity.y = JUMP_VELOCITY
-			jump_force_applied = true
+			change_animation("jump", 0.05)
+			
+		elif jumps_made < max_jumps:
+			# ✅ الدابل جامب (نص النطة العادية بالظبط)
+			jumps_made += 1
+			velocity.y = JUMP_VELOCITY * 0.5  
+			movement_animation.play("jump", 0.05)
 
-	# --- 4. الحركة الناعمة (Smooth Movement) ---
+	# --- 3. الحركة مع التسارع وبدون احتكاك ---
 	var direction := Input.get_axis("ui_left", "ui_right")
 	var target_speed = direction * SPEED
-
+	
 	if is_on_floor():
-		if direction != 0:
-			velocity.x = move_toward(velocity.x, target_speed, ACCELERATION * delta)
-		else:
-			velocity.x = move_toward(velocity.x, 0, FRICTION * delta)
+		# لو بيدوس على زرار، بيتسارع ناحية سرعته القصوى
+		# لو مبيدوسش (direction = 0)، بيتسارع ناحية الصفر (يعني بيفرمل بنفس التسارع)
+		velocity.x = move_toward(velocity.x, target_speed, ACCELERATION * delta)
 	else:
-		if direction != 0:
-			velocity.x = move_toward(velocity.x, target_speed, AIR_ACCELERATION * delta)
-		else:
-			velocity.x = move_toward(velocity.x, 0, AIR_FRICTION * delta)
+		# نفس الفكرة في الهواء
+		velocity.x = move_toward(velocity.x, target_speed, AIR_ACCELERATION * delta)
 
-	# --- 5. قلب الاتجاه (Flipping) ---
+	# --- 4. قلب الاتجاه (Flipping) ---
 	if direction != 0:
 		if direction > 0:
 			skin_sprite.flip_h = false 
@@ -114,15 +117,14 @@ func _physics_process(delta: float) -> void:
 			first_hand.flip_h = true
 			second_hand.flip_h = true
 
-	# --- 6. منطق الأنيميشن ---
+	# --- 5. منطق الأنيميشن ---
 	if not is_on_floor():
-		# في الهواء، سيب أنيميشن الـ jump شغال ومتستدعيش play كل فريم
 		pass 
 	else:
-		if not is_jumping:
+		if jumps_made == 0: 
 			if abs(velocity.x) > 50.0: 
 				if velocity.x > 0:
-					change_animation("move_right", 0.1) # وقت دمج 0.2 ثانية
+					change_animation("move_right", 0.1)
 				else:
 					change_animation("move_left", 0.1)
 			else:
