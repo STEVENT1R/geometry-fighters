@@ -186,7 +186,7 @@ tracks/6/keys = {
 
 [sub_resource type="Animation" id="Animation_rlxnd"]
 resource_name = "jump"
-length = 0.19999999999999998
+length = 0.2
 step = 0.1
 tracks/0/type = "bezier"
 tracks/0/imported = false
