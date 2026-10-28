@@ -1,1 +1,4 @@
 res://resources/basics/base_player/base_player.gd
+res://maps/map1/map1.tscn
+res://resources/themes/main_theme.tres
+res://addons/GD-Sync/UI/ConfigMenu/GD-Theme.tres
