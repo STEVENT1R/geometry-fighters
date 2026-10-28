@@ -22,12 +22,12 @@ config/icon="uid://o84d5us6ahc2"
 [autoload]
 
 GDSync="*res://addons/GD-Sync/MultiplayerClient.gd"
+NetworkSession="*uid://cbklcw0ect75v"
 
 [display]
 
 window/size/viewport_width=1280
 window/size/viewport_height=720
-window/size/mode=3
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 

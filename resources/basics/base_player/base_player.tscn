@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dpm8kfskagb3b" path="res://resources/basics/base_player/base_player.gd" id="1_1k8ur"]
 [ext_resource type="Texture2D" uid="uid://vfutjs83f67o" path="res://assets/spritesheets/spritesheet_retina.png" id="1_7gm5u"]
+[ext_resource type="Script" uid="uid://fcoih1ax5dcs" path="res://addons/GD-Sync/Scripts/Types/PropertySynchronizer.gd" id="3_anuaf"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_8a8pi"]
 atlas = ExtResource("1_7gm5u")
@@ -19,7 +20,7 @@ atlas = SubResource("CompressedTexture2D_1k8ur")
 region = Rect2(1192, 1192, 48, 48)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hrq6i"]
-size = Vector2(40.468216, 61.91064)
+size = Vector2(40.468216, 61.325287)
 
 [sub_resource type="Animation" id="Animation_gc6tf"]
 length = 0.001
@@ -407,7 +408,7 @@ scale = Vector2(0.5, 0.5)
 texture = SubResource("AtlasTexture_65205")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1904013703]
-position = Vector2(0.116241455, -1.1318378)
+position = Vector2(0.116241455, -1.4245148)
 shape = SubResource("RectangleShape2D_hrq6i")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=709719803]
@@ -415,3 +416,15 @@ zoom = Vector2(1.5, 1.5)
 
 [node name="movement" type="AnimationPlayer" parent="." unique_id=2039958831]
 libraries/ = SubResource("AnimationLibrary_gc6tf")
+
+[node name="PropertySynchronizer" type="Node" parent="." unique_id=65045921]
+script = ExtResource("3_anuaf")
+broadcast = 2
+refresh_rate = 15
+node_path = NodePath("..")
+properties = PackedStringArray("global_position", "velocity", "network_flip_h", "network_animation")
+interpolated = true
+interpolation_speed = 13.0
+extrapolated = false
+max_extrapolation_time = 0.2
+metadata/_custom_type_script = "uid://fcoih1ax5dcs"

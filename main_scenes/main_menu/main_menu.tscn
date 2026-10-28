@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://deipt2a7q0q7f" path="res://assets/game_designs/logo.png" id="1_pq8uq"]
 [ext_resource type="Script" uid="uid://ueais7kosxhb" path="res://main_scenes/main_menu/main_menu.gd" id="1_y8l6a"]
+[ext_resource type="Texture2D" uid="uid://dc4rm67avqe0" path="res://assets/game_designs/wallpaper.jpg" id="2_q7aam"]
 
 [node name="main_menu" type="Control" unique_id=794540857]
 layout_mode = 3
@@ -11,6 +12,21 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_y8l6a")
+
+[node name="BG" type="TextureRect" parent="." unique_id=1904050697]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -960.0
+offset_top = -600.0
+offset_right = 960.0
+offset_bottom = 600.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_q7aam")
 
 [node name="Logo" type="TextureRect" parent="." unique_id=643745104]
 layout_mode = 1

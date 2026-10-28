@@ -1,10 +1,15 @@
-RichTextLabel
+PropertySynchronizer
+Marker2D
+Node
 Label
+Control
+ColorRect
 Button
+CanvasLayer
 TextureRect
+RichTextLabel
 Camera2D
 Sprite2D
 AnimationPlayer
 CollisionShape2D
 TileMapLayer
-CharacterBody2D

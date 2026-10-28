@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://deipt2a7q0q7f" path="res://assets/game_designs/logo.png" id="1_eyd21"]
 [ext_resource type="Script" uid="uid://cs4kyfjx3artq" path="res://main_scenes/multiplayer/multiplayer.gd" id="1_hdhpl"]
+[ext_resource type="Texture2D" uid="uid://dc4rm67avqe0" path="res://assets/game_designs/wallpaper.jpg" id="2_a1cg3"]
 
 [node name="multiplayer" type="Control" unique_id=1062166024]
 layout_mode = 3
@@ -11,6 +12,21 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_hdhpl")
+
+[node name="BG" type="TextureRect" parent="." unique_id=1484325512]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -960.0
+offset_top = -600.0
+offset_right = 960.0
+offset_bottom = 600.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_a1cg3")
 
 [node name="Logo" type="TextureRect" parent="." unique_id=1804482093]
 layout_mode = 1
@@ -151,4 +167,5 @@ text = "Back"
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[connection signal="pressed" from="local" to="." method="_on_local_pressed"]
 [connection signal="pressed" from="back" to="." method="_on_back_pressed"]

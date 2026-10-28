@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://kkt04bhmuqur"]
+
+[ext_resource type="Script" uid="uid://dggiejfjcjjvx" path="res://resources/basics/PlayerSpawner/players_spawner.gd" id="1_o214d"]
+[ext_resource type="PackedScene" uid="uid://jfotokj7wce7" path="res://resources/basics/base_player/base_player.tscn" id="2_ev5ty"]
+
+[node name="PlayersSpawner" type="Node" unique_id=125082323 node_paths=PackedStringArray("spawn_points")]
+script = ExtResource("1_o214d")
+base_player = ExtResource("2_ev5ty")
+spawn_points = [NodePath("spawn_point1"), NodePath("spawn_point2"), NodePath("spawn_point3"), NodePath("spawn_point4")]
+
+[node name="spawn_point1" type="Marker2D" parent="." unique_id=690410967]
+position = Vector2(-32.008408, 7.9462585)
+
+[node name="spawn_point2" type="Marker2D" parent="." unique_id=1766038033]
+position = Vector2(-11.934662, 24.196426)
+
+[node name="spawn_point3" type="Marker2D" parent="." unique_id=335470373]
+position = Vector2(11.9626465, 23.877792)
+
+[node name="spawn_point4" type="Marker2D" parent="." unique_id=125759232]
+position = Vector2(31.399124, 7.9462547)

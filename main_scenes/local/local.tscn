@@ -1,0 +1,244 @@
+[gd_scene format=3 uid="uid://b3oju6g05xgy4"]
+
+[ext_resource type="Texture2D" uid="uid://dc4rm67avqe0" path="res://assets/game_designs/wallpaper.jpg" id="1_aifjr"]
+[ext_resource type="Script" uid="uid://cw4f50c0sxt6v" path="res://main_scenes/local/local.gd" id="1_om6yn"]
+[ext_resource type="Texture2D" uid="uid://deipt2a7q0q7f" path="res://assets/game_designs/logo.png" id="1_p3e0v"]
+
+[node name="local" type="Control" unique_id=1465746535]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_om6yn")
+
+[node name="BG" type="TextureRect" parent="." unique_id=1575410065]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -960.0
+offset_top = -600.0
+offset_right = 960.0
+offset_bottom = 600.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_aifjr")
+
+[node name="Logo" type="TextureRect" parent="." unique_id=175084315]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -266.1004
+offset_right = 266.1006
+offset_bottom = 266.101
+grow_horizontal = 2
+texture = ExtResource("1_p3e0v")
+expand_mode = 1
+
+[node name="title" type="RichTextLabel" parent="." unique_id=222484237]
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = -138.78381
+offset_bottom = 11.256165
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/normal_font_size = 80
+bbcode_enabled = true
+text = "[wave]Multiplayer"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="main" type="Control" parent="." unique_id=552835438]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="host" type="Button" parent="main" unique_id=81075930]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -284.0204
+offset_top = 67.01697
+offset_right = -6.651367
+offset_bottom = 148.01196
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="text" type="Label" parent="main/host" unique_id=1889090451]
+layout_mode = 0
+offset_top = 2.0
+offset_right = 277.17432
+offset_bottom = 69.428604
+theme_override_font_sizes/font_size = 60
+text = "Host"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="join" type="Button" parent="main" unique_id=1505462720]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 9.092468
+offset_top = 67.01697
+offset_right = 286.4615
+offset_bottom = 148.01196
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="text" type="Label" parent="main/join" unique_id=2076933986]
+layout_mode = 0
+offset_top = 2.0
+offset_right = 277.17432
+offset_bottom = 69.428604
+theme_override_font_sizes/font_size = 60
+text = "Join"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="local_games" type="Label" parent="main" unique_id=1247310300]
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = 163.0
+offset_bottom = 223.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "No Local Games Found"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="host" type="Control" parent="." unique_id=161784196]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ready" type="Button" parent="host" unique_id=585417272]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -286.2268
+offset_top = -183.74554
+offset_right = -8.85791
+offset_bottom = -102.75055
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="text" type="Label" parent="host/ready" unique_id=389955195]
+layout_mode = 0
+offset_top = 2.0
+offset_right = 277.17432
+offset_bottom = 69.428604
+theme_override_font_sizes/font_size = 60
+text = "Ready"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="start" type="Button" parent="host" unique_id=473089882]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -286.2268
+offset_top = -95.16748
+offset_right = -8.85791
+offset_bottom = -14.172485
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="text" type="Label" parent="host/start" unique_id=1476882679]
+layout_mode = 0
+offset_top = 2.0
+offset_right = 277.17432
+offset_bottom = 69.428604
+theme_override_font_sizes/font_size = 60
+text = "Start"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="client" type="Control" parent="." unique_id=1669961125]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ready" type="Button" parent="client" unique_id=807967243]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -287.46313
+offset_top = -96.31549
+offset_right = -10.094238
+offset_bottom = -15.320496
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="text" type="Label" parent="client/ready" unique_id=227460571]
+layout_mode = 0
+offset_top = 2.0
+offset_right = 277.17432
+offset_bottom = 69.428604
+theme_override_font_sizes/font_size = 60
+text = "Ready"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="connecting_screen" type="ColorRect" parent="." unique_id=558222520]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="connecting_state" type="Label" parent="connecting_screen" unique_id=1223966002]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Joining..."
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[connection signal="pressed" from="main/host" to="." method="_on_host_pressed"]
+[connection signal="pressed" from="main/join" to="." method="_on_join_pressed"]
+[connection signal="pressed" from="host/ready" to="." method="_on_host_ready_pressed"]
+[connection signal="pressed" from="host/start" to="." method="_on_host_start_pressed"]
+[connection signal="pressed" from="client/ready" to="." method="_on_client_ready_pressed"]

@@ -2,11 +2,26 @@
 
 [ext_resource type="PackedScene" uid="uid://kk6ekqsm2ixl" path="res://resources/basics/tilemap/tilemap.tscn" id="1_01wn7"]
 [ext_resource type="PackedScene" uid="uid://jfotokj7wce7" path="res://resources/basics/base_player/base_player.tscn" id="2_rqofp"]
+[ext_resource type="Script" uid="uid://dggiejfjcjjvx" path="res://resources/basics/PlayerSpawner/players_spawner.gd" id="2_vi5q3"]
 
 [node name="Map1" type="Node2D" unique_id=1349463397]
 
 [node name="tilemap" parent="." unique_id=887211312 instance=ExtResource("1_01wn7")]
 tile_map_data = PackedByteArray("AAABAAEAAgAAAAAAAAACAAEAAgABAAAAAAAJAAIAAgAAAAAAAAAKAAIAAgABAAAAAAARAAIAAgAAAAAAAAASAAIAAgABAAAAAAAFAAIAAgAAAAEAAAAGAAIAAgABAAEAAAANAAEAAgAAAAEAAAAOAAEAAgABAAEAAAAHAAAAAgAAAAEAAAAIAAAAAgABAAEAAAALAAAAAgAAAAEAAAAMAAAAAgABAAEAAAAJAAsAAgAGAAYAAAABAAYAAgADAAYAAAABAAUAAgAGAAEAAAACAAYAAgADAAYAAAADAAYAAgADAAYAAAAEAAYAAgADAAYAAAASAAYAAgADAAYAAAAPAAYAAgADAAYAAAAQAAYAAgADAAYAAAARAAYAAgADAAYAAAASAAUAAgAGAAIAAAAJAAQAAgAKAAMAAAAJAAUAAgADAAYAAAAKAAQAAgAKAAMAAAAKAAUAAgADAAYAAAAIAAUAAgADAAYAAAAJAAMAAgAKAAIAAAAKAAMAAgAKAAIAAAALAAUAAgADAAYAAAAFAAkAAgADAAYAAAAGAAkAAgADAAYAAAAHAAkAAgADAAYAAAAIAAkAAgADAAYAAAAJAAkAAgADAAYAAAAJAAoAAgAGAAQAAAAKAAkAAgADAAYAAAALAAkAAgADAAYAAAAMAAkAAgADAAYAAAANAAkAAgADAAYAAAAFAAoAAgAFAAQAAAAGAAoAAgAFAAQAAAAHAAoAAgAFAAQAAAAIAAoAAgAFAAQAAAAKAAoAAgAFAAQAAAALAAoAAgAFAAQAAAAMAAoAAgAFAAQAAAANAAoAAgAFAAQAAAAKAAAAAgABAAQAAAAJAAAAAgAAAAgAAAA=")
 
-[node name="base_player" parent="." unique_id=2015537908 instance=ExtResource("2_rqofp")]
-position = Vector2(476.4981, 399.058)
+[node name="PlayersSpawner" type="Node" parent="." unique_id=125082323 node_paths=PackedStringArray("spawn_points")]
+script = ExtResource("2_vi5q3")
+base_player = ExtResource("2_rqofp")
+spawn_points = [NodePath("spawn_point1"), NodePath("spawn_point2"), NodePath("spawn_point3"), NodePath("spawn_point4")]
+
+[node name="spawn_point1" type="Marker2D" parent="PlayersSpawner" unique_id=690410967]
+position = Vector2(153.89165, 333.42728)
+
+[node name="spawn_point2" type="Marker2D" parent="PlayersSpawner" unique_id=1766038033]
+position = Vector2(1118.3153, 345.39636)
+
+[node name="spawn_point3" type="Marker2D" parent="PlayersSpawner" unique_id=335470373]
+position = Vector2(408.65973, 539.57104)
+
+[node name="spawn_point4" type="Marker2D" parent="PlayersSpawner" unique_id=125759232]
+position = Vector2(799.7491, 540.3461)
