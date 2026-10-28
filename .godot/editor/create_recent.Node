@@ -1,0 +1,10 @@
+RichTextLabel
+Label
+Button
+TextureRect
+Camera2D
+Sprite2D
+AnimationPlayer
+CollisionShape2D
+TileMapLayer
+CharacterBody2D
