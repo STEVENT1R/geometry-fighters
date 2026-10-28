@@ -91,7 +91,7 @@ func _physics_process(delta: float) -> void:
 		elif jumps_made < max_jumps:
 			# ✅ الدابل جامب (نص النطة العادية بالظبط)
 			jumps_made += 1
-			velocity.y = JUMP_VELOCITY * 0.5  
+			velocity.y = JUMP_VELOCITY * 0.7
 			movement_animation.play("jump", 0.05)
 
 	# --- 3. الحركة مع التسارع وبدون احتكاك ---
