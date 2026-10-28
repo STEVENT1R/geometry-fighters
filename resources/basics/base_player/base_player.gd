@@ -2,21 +2,28 @@ extends CharacterBody2D
 
 # --- الثوابت (Constants) ---
 const SPEED = 350.0
-const JUMP_VELOCITY = -550.0            # قوة النطة العادية
+const JUMP_VELOCITY = -550.0
 const SKINS_PATH := "res://resources/skins/"
 
-# ✅ إعدادات التسارع (بدون احتكاك)
-# التسارع ده بيستخدم للحركة وللفرملة (الوقوف)
 const ACCELERATION = 3500.0       
 const AIR_ACCELERATION = 2000.0   
 
 # --- إعدادات القفز ---
-@export var max_jumps: int = 2   # 2 تعني دابل جامب
+@export var max_jumps: int = 2
 var jumps_made: int = 0
 
 # --- إعدادات وقت السماح بالنطة بعد السقوط (Coyote Time) ---
 @export var coyote_time_max: float = 0.15 
 var coyote_time_left: float = 0.0
+
+# --- ✅ إعدادات التعلق بالحيط (Wall Slide / Wall Jump) ---
+@export var wall_slide_speed: float = 80.0      # سرعة السقوط البطيئة على الحيطة
+@export var wall_stick_time: float = 1.5        # مدة السماح بالقفز من الحيطة
+@export var wall_jump_force: Vector2 = Vector2(400.0, -550.0)  # (دفع أفقي، دفع عمودي)
+
+var wall_time_left: float = 0.0                 # العداد المتبقي
+var wall_normal: float = 0.0                    # اتجاه الحيطة (-1 يسار، 1 يمين)
+var is_wall_sliding: bool = false
 
 # --- المتغيرات (Variables) ---
 @export var current_skin: String = "red_rectangle"
@@ -76,51 +83,95 @@ func _physics_process(delta: float) -> void:
 	else:
 		coyote_time_left = coyote_time_max
 		jumps_made = 0 
+		wall_time_left = 0.0
+		is_wall_sliding = false
 
-	# --- 2. استقبال أمر القفز (عادي + دابل جامب) ---
-	if Input.is_action_just_pressed("ui_accept"):
-		var can_ground_jump = is_on_floor() or coyote_time_left > 0.0
-		
-		if can_ground_jump and jumps_made == 0:
-			# النطة العادية
-			jumps_made = 1
-			coyote_time_left = 0.0
-			velocity.y = JUMP_VELOCITY
-			change_animation("jump", 0.05)
-			
-		elif jumps_made < max_jumps:
-			# ✅ الدابل جامب (نص النطة العادية بالظبط)
-			jumps_made += 1
-			velocity.y = JUMP_VELOCITY * 0.7
-			movement_animation.play("jump", 0.05)
-
-	# --- 3. الحركة مع التسارع وبدون احتكاك ---
-	var direction := Input.get_axis("ui_left", "ui_right")
-	var target_speed = direction * SPEED
+	# --- ✅ 2. منطق التعلق بالحيط ---
+	is_wall_sliding = false
 	
-	if is_on_floor():
-		# لو بيدوس على زرار، بيتسارع ناحية سرعته القصوى
-		# لو مبيدوسش (direction = 0)، بيتسارع ناحية الصفر (يعني بيفرمل بنفس التسارع)
-		velocity.x = move_toward(velocity.x, target_speed, ACCELERATION * delta)
-	else:
-		# نفس الفكرة في الهواء
-		velocity.x = move_toward(velocity.x, target_speed, AIR_ACCELERATION * delta)
+	if not is_on_floor() and is_on_wall() and velocity.y >= 0.0:
+		# ناخد اتجاه الحيطة (لو الحيطة على الشمال، الnormal هيكون (1,0)، والعكس)
+		wall_normal = get_wall_normal().x
+		
+		# ✅ نشحن العداد لو لسه مش شغال (أول لمسة للحيطة)
+		if wall_time_left <= 0.0:
+			wall_time_left = wall_stick_time
+		
+		# ✅ طول ما العداد شغال، اللاعب ملزوق
+		if wall_time_left > 0.0:
+			is_wall_sliding = true
+			wall_time_left -= delta
+			
+			# تثبيت اللاعب على الحيطة (سقوط بطيء بدل السقوط الحر)
+			velocity.y = min(velocity.y, wall_slide_speed)
+			
+			# ✅ تصفير سرعة X عشان يبقى ملزوق ومش بيتحرك أفقيًا
+			velocity.x = 0.0
+			
+			# ✅ يخلي اللاعب يبص في اتجاه الحيطة (اختياري)
+			skin_sprite.flip_h = wall_normal < 0.0
+			first_hand.flip_h = wall_normal < 0.0
+			second_hand.flip_h = wall_normal < 0.0
+	
+	# لو اللاعب بعد عن الحيطة، صفّر العداد
+	if not is_on_wall():
+		wall_time_left = 0.0
 
-	# --- 4. قلب الاتجاه (Flipping) ---
-	if direction != 0:
-		if direction > 0:
-			skin_sprite.flip_h = false 
-			first_hand.flip_h = false
-			second_hand.flip_h = false
-		elif direction < 0:
-			skin_sprite.flip_h = true  
-			first_hand.flip_h = true
-			second_hand.flip_h = true
+	# --- 3. استقبال أمر القفز (عادي + دابل جامب + قفز من الحيطة) ---
+	if Input.is_action_just_pressed("ui_accept"):
+		
+		# ✅ أولوية القفز من الحيطة
+		if is_wall_sliding and wall_time_left > 0.0:
+			# القفز في الاتجاه المعاكس للحيطة + لفوق
+			velocity.x = wall_normal * wall_jump_force.x
+			velocity.y = wall_jump_force.y
+			
+			# تصفير العداد عشان ميقدرش يقفز تاني من نفس الحيطة
+			wall_time_left = 0.0
+			is_wall_sliding = false
+			
+			# ✅ نصفر الدابل جامب عشان يقدر يستخدمه بعد قفزة الحيطة
+			jumps_made = 1
+			
+			change_animation("jump", 0.05)
+		
+		else:
+			var can_ground_jump = is_on_floor() or coyote_time_left > 0.0
+			
+			if can_ground_jump and jumps_made == 0:
+				jumps_made = 1
+				coyote_time_left = 0.0
+				velocity.y = JUMP_VELOCITY
+				change_animation("jump", 0.05)
+				
+			elif jumps_made < max_jumps:
+				jumps_made += 1
+				velocity.y = JUMP_VELOCITY * 0.7
+				movement_animation.play("jump", 0.05)
 
-	# --- 5. منطق الأنيميشن ---
-	if not is_on_floor():
+	# --- 4. الحركة مع التسارع وبدون احتكاك ---
+	var direction := Input.get_axis("ui_left", "ui_right")
+	
+	# ✅ لو ملزوق بالحيطة، منتحكمش في velocity.x (التصقير فوق كفاية)
+	if not is_wall_sliding:
+		var target_speed = direction * SPEED
+		
+		if is_on_floor():
+			velocity.x = move_toward(velocity.x, target_speed, ACCELERATION * delta)
+		else:
+			velocity.x = move_toward(velocity.x, target_speed, AIR_ACCELERATION * delta)
+
+		# --- 5. قلب الاتجاه (Flipping) ---
+		if direction != 0:
+			var flip = direction < 0
+			skin_sprite.flip_h = flip
+			first_hand.flip_h = flip
+			second_hand.flip_h = flip
+
+	# --- 6. منطق الأنيميشن ---
+	if not is_on_floor() and not is_wall_sliding:
 		pass 
-	else:
+	elif is_on_floor():
 		if jumps_made == 0: 
 			if abs(velocity.x) > 50.0: 
 				if velocity.x > 0:
