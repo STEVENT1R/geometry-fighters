@@ -1,8 +1,10 @@
 [gd_scene format=3 uid="uid://bubywcl87mh25"]
 
+[ext_resource type="Script" uid="uid://cpar2roh2gsu3" path="res://main_scenes/customize/customize.gd" id="1_bdxut"]
 [ext_resource type="Texture2D" uid="uid://dc4rm67avqe0" path="res://assets/game_designs/wallpaper.jpg" id="1_ngjt7"]
 [ext_resource type="Texture2D" uid="uid://deipt2a7q0q7f" path="res://assets/game_designs/logo.png" id="2_gcxiy"]
 [ext_resource type="Texture2D" uid="uid://d188twawt4syf" path="res://assets/UI/Extra/Double/icon_play_outline.png" id="3_gcxiy"]
+[ext_resource type="PackedScene" uid="uid://f57vcmngbulo" path="res://resources/basics/player_preview/player_preview.tscn" id="4_lpisg"]
 
 [node name="customize" type="Control" unique_id=557938741]
 layout_mode = 3
@@ -11,6 +13,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_bdxut")
 
 [node name="BG" type="TextureRect" parent="." unique_id=1382875374]
 layout_mode = 1
@@ -46,10 +49,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = 115.777405
-offset_top = 77.956726
-offset_right = 183.7774
-offset_bottom = 153.95673
+offset_left = 152.04779
+offset_top = -35.927246
+offset_right = 220.04779
+offset_bottom = 40.072754
 grow_horizontal = 2
 grow_vertical = 2
 texture_normal = ExtResource("3_gcxiy")
@@ -61,14 +64,37 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -133.85168
-offset_top = 77.956726
-offset_right = -65.851685
-offset_bottom = 153.95673
+offset_left = -149.66962
+offset_top = -35.927246
+offset_right = -81.66962
+offset_bottom = 40.072754
 grow_horizontal = 2
 grow_vertical = 2
 scale = Vector2(-1, 1)
 texture_normal = ExtResource("3_gcxiy")
+
+[node name="character_done" type="Button" parent="." unique_id=338534819]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -94.03522
+offset_top = 85.24399
+offset_right = 94.03522
+offset_bottom = 167.35999
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="text" type="Label" parent="character_done" unique_id=1297449573]
+layout_mode = 0
+offset_right = 188.67456
+offset_bottom = 67.86902
+theme_override_font_sizes/font_size = 50
+text = "Equip"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="player_preview" type="Control" parent="." unique_id=1690518784]
 layout_mode = 1
@@ -77,9 +103,69 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -20.0
-offset_top = -20.0
-offset_right = 20.0
-offset_bottom = 20.0
+offset_left = -8.0
+offset_top = -112.662476
+offset_right = 32.0
+offset_bottom = -72.662476
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="player_preview" parent="player_preview" unique_id=1929342485 instance=ExtResource("4_lpisg")]
+position = Vector2(8.784668, 106.05621)
+scale = Vector2(2.5, 2.5)
+
+[node name="name" type="LineEdit" parent="." unique_id=1396321673]
+layout_mode = 0
+offset_left = 314.05872
+offset_top = 557.77515
+offset_right = 751.6837
+offset_bottom = 649.77515
+placeholder_text = "Change Your Name"
+alignment = 1
+
+[node name="name_done" type="Button" parent="." unique_id=1226350602]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 132.57697
+offset_top = 202.97943
+offset_right = 309.94598
+offset_bottom = 283.97443
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="text" type="Label" parent="name_done" unique_id=683285167]
+layout_mode = 0
+offset_top = 2.0
+offset_right = 177.47128
+offset_bottom = 69.428604
+theme_override_font_sizes/font_size = 60
+text = "Done"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="back" type="Button" parent="." unique_id=1483948933]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 21.0
+offset_top = -91.994995
+offset_right = 198.36902
+offset_bottom = -11.0
+grow_vertical = 0
+
+[node name="text" type="Label" parent="back" unique_id=1399020849]
+layout_mode = 0
+offset_top = 2.0
+offset_right = 177.47128
+offset_bottom = 69.428604
+theme_override_font_sizes/font_size = 60
+text = "Back"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[connection signal="pressed" from="back" to="." method="_on_back_pressed"]

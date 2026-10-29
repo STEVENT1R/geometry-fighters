@@ -1,6 +1,8 @@
 
 extends CharacterBody2D
 
+signal died(player: CharacterBody2D)
+
 # ═══════════════════════════════════════
 # Movement Constants
 # ═══════════════════════════════════════
@@ -44,6 +46,11 @@ var _wall_contact_timer: float = 0.0
 @export var current_skin: String = "red_rectangle"
 var _applied_skin: String = ""
 
+@export_group("Death")
+@export var kill_zone_y: float = 1500.0
+var is_dead: bool = false
+var _applied_death_state: bool = false
+
 @export_storage var owner_client_id: int = -1
 @export_storage var initial_spawn_position: Vector2 = Vector2.ZERO
 var ownership_initialized: bool = false
@@ -62,6 +69,7 @@ var network_animation: String = "idle"
 @onready var first_hand: Sprite2D = $first_hand
 @onready var second_hand: Sprite2D = $second_hand
 @onready var player_camera: Camera2D = $Camera2D
+@onready var collision_shape: CollisionShape2D = $CollisionShape2D
 
 # ═══════════════════════════════════════
 # Initialization
@@ -150,6 +158,43 @@ func set_camera_tracking_enabled(enabled: bool) -> void:
 	camera_tracking_enabled = enabled
 
 
+func die() -> void:
+	if is_dead:
+		return
+	is_dead = true
+	camera_tracking_enabled = false
+	velocity = Vector2.ZERO
+	_apply_death_state()
+
+
+func respawn_at(spawn_position: Vector2) -> void:
+	global_position = spawn_position
+	velocity = Vector2.ZERO
+	is_dead = false
+	camera_tracking_enabled = true
+	_apply_death_state()
+
+
+func _apply_death_state() -> void:
+	var was_dead: bool = _applied_death_state
+	_applied_death_state = is_dead
+	visible = not is_dead
+	collision_shape.set_deferred("disabled", is_dead)
+
+	if is_dead:
+		movement_animation.stop()
+		player_camera.enabled = false
+		if not was_dead:
+			died.emit(self)
+	elif ownership_initialized:
+		var shared_camera_exists: bool = (
+			get_tree().get_first_node_in_group("game_camera") != null
+		)
+		player_camera.enabled = is_local_player and not shared_camera_exists
+		if player_camera.enabled:
+			player_camera.make_current()
+
+
 # ═══════════════════════════════════════
 # Visual Synchronization
 # ═══════════════════════════════════════
@@ -160,6 +205,9 @@ func _process(_delta: float) -> void:
 
 	if current_skin != _applied_skin:
 		apply_skin(current_skin)
+
+	if is_dead != _applied_death_state:
+		_apply_death_state()
 
 	if is_local_player:
 		return
@@ -233,7 +281,7 @@ func _physics_process(delta: float) -> void:
 		return
 
 	# Only the owning client processes movement.
-	if not is_local_player:
+	if not is_local_player or is_dead:
 		return
 
 	var direction: float = Input.get_axis(
@@ -379,3 +427,6 @@ func _physics_process(delta: float) -> void:
 	# ─────────────────────────────────────
 
 	move_and_slide()
+
+	if global_position.y > kill_zone_y:
+		die()

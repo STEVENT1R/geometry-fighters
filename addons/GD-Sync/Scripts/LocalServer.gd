@@ -349,7 +349,9 @@ func peer_disconnected(id : int) -> void:
 	logger.write_log("Peer disconnected.", "[LocalServer]")
 	if peer_client_table.has(id):
 		var client : Client = peer_client_table[id]
-		leave_lobby_request(client)
+		# ENet already disconnected this peer. Only clean the lobby state; trying
+		# to disconnect it again reaches a wrapper whose native peer is null.
+		leave_lobby_request(client, false)
 
 func _take_unreliable_batch(requests : Array) -> Array:
 	var fit : int = 1
@@ -558,7 +560,7 @@ func join_lobby_request(from : Client, request : Array) -> void:
 	for node_path in local_owner_cache:
 		send_message(ENUMS.MESSAGE_TYPE.SET_GDSYNC_OWNER, from, node_path, local_owner_cache[node_path])
 
-func leave_lobby_request(from : Client) -> void:
+func leave_lobby_request(from : Client, disconnect_transport: bool = true) -> void:
 	logger.write_log(" <"+str(from.client_id)+">", "[LocalServer]")
 	if lobby_client_table.has(from.client_id):
 		lobby_client_table.erase(from.client_id)
@@ -582,7 +584,7 @@ func leave_lobby_request(from : Client) -> void:
 	if peer_client_table.has(from.peer_id):
 		peer_client_table.erase(from.peer_id)
 	
-	if local_server.get_peer(from.peer_id) != null:
+	if disconnect_transport and local_server.get_peer(from.peer_id) != null:
 		local_server.disconnect_peer(from.peer_id)
 
 func open_lobby_request(from : Client, request : Array) -> void:

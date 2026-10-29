@@ -12,3 +12,7 @@ res://resources/basics/game_cam/game_cam.tscn
 res://resources/globals/NetworkSession.gd
 res://main_scenes/customize/customize.tscn
 res://resources/basics/player_preview/player_preview.tscn
+res://main_scenes/main_menu/main_menu.gd
+res://main_scenes/main_menu/main_menu.tscn
+res://main_scenes/customize/customize.gd
+res://addons/GD-Sync/Scripts/LocalServer.gd

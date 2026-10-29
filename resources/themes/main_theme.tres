@@ -1,6 +1,9 @@
 [gd_resource type="Theme" format=3 uid="uid://dx882i3m23ld2"]
 
 [ext_resource type="Texture2D" uid="uid://5d81xeau1h1s" path="res://assets/UI/Grey/Double/button_rectangle_depth_gloss.png" id="1_x2ak3"]
+[ext_resource type="Texture2D" uid="uid://bptasme7f41xb" path="res://assets/UI/Grey/Double/check_square_grey_checkmark.png" id="2_0wthw"]
+[ext_resource type="Texture2D" uid="uid://csdosgp2n7rcg" path="res://assets/UI/Extra/Double/input_outline_square.png" id="2_i4ejt"]
+[ext_resource type="Texture2D" uid="uid://djbouvgyrmbb8" path="res://assets/UI/Grey/Double/check_square_grey_cross.png" id="3_dagba"]
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_i4ejt"]
 load_path = "res://.godot/imported/button_rectangle_depth_gloss.png-450cae57b34fd54c9ab778fd95f3797a.ctex"
@@ -39,11 +42,23 @@ texture_margin_top = 15.0
 texture_margin_right = 15.0
 texture_margin_bottom = 25.0
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_xtbu8"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_4ybt3"]
+texture = ExtResource("2_i4ejt")
+texture_margin_left = 20.0
+texture_margin_top = 20.0
+texture_margin_right = 20.0
+texture_margin_bottom = 20.0
+
 [resource]
 Button/styles/disabled = SubResource("StyleBoxTexture_yjg5f")
 Button/styles/hover = SubResource("StyleBoxTexture_dagba")
 Button/styles/normal = SubResource("StyleBoxTexture_pq8uq")
 Button/styles/pressed = SubResource("StyleBoxTexture_hf3i3")
+CheckBox/icons/checked = ExtResource("2_0wthw")
+CheckBox/icons/unchecked = ExtResource("3_dagba")
+CheckBox/styles/focus = SubResource("StyleBoxEmpty_xtbu8")
 Label/colors/font_outline_color = Color(0, 0, 0, 1)
 Label/colors/font_shadow_color = Color(0, 0, 0, 1)
 Label/constants/outline_size = 18
@@ -51,5 +66,10 @@ Label/constants/shadow_offset_x = 4
 Label/constants/shadow_offset_y = 4
 Label/constants/shadow_outline_size = 1
 Label/font_sizes/font_size = 60
+LineEdit/colors/font_color = Color(0.875, 0.875, 0.875, 1)
+LineEdit/colors/font_placeholder_color = Color(1, 1, 1, 1)
+LineEdit/constants/outline_size = 13
+LineEdit/font_sizes/font_size = 50
+LineEdit/styles/normal = SubResource("StyleBoxTexture_4ybt3")
 RichTextLabel/constants/outline_size = 18
 RichTextLabel/font_sizes/normal_font_size = 60
