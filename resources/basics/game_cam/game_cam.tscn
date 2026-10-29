@@ -2,5 +2,5 @@
 
 [ext_resource type="Script" uid="uid://ir0kc48qx36x" path="res://resources/basics/game_cam/game_cam.gd" id="1_bxpfe"]
 
-[node name="GameCam" type="Camera2D" unique_id=1710437418]
+[node name="GameCam" type="Camera2D" unique_id=1710437418 groups=["game_camera"]]
 script = ExtResource("1_bxpfe")

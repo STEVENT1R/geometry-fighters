@@ -42,10 +42,13 @@ var _wall_contact_timer: float = 0.0
 # ═══════════════════════════════════════
 
 @export var current_skin: String = "red_rectangle"
+var _applied_skin: String = ""
 
-var owner_client_id: int = -1
+@export_storage var owner_client_id: int = -1
+@export_storage var initial_spawn_position: Vector2 = Vector2.ZERO
 var ownership_initialized: bool = false
 var is_local_player: bool = false
+var camera_tracking_enabled: bool = true
 
 var network_flip_h: bool = false
 var network_animation: String = "idle"
@@ -76,21 +79,47 @@ func _ready() -> void:
 
 	player_camera.enabled = false
 
-	# Wait until the network spawn has completed.
-	call_deferred("_initialize_network")
+
+
+func _multiplayer_ready() -> void:
+	# GD-Sync calls this only after the replicated starting properties have
+	# been applied, so owner ID and spawn position are already available.
+	_initialize_network()
 
 
 func _initialize_network() -> void:
 	if not is_inside_tree():
 		return
 
-	# The spawner currently names players using client IDs.
-	if str(name).is_valid_int():
-		owner_client_id = int(str(name))
-
 	if owner_client_id == -1:
 		push_warning(
 			"[Player] Missing owner ID for " + str(name)
+		)
+		return
+
+	# NodeInstantiator does not replicate position changes made while spawning.
+	# The spawner sends this explicit value as part of the starting properties.
+	global_position = initial_spawn_position
+	apply_skin(current_skin)
+
+	# Ownership can arrive just before or just after the replicated player.
+	# Wait briefly so the synchronizer never starts with the wrong authority.
+	var owner_wait_frames: int = 0
+	while (
+		GDSync.get_gdsync_owner(self) != owner_client_id
+		and owner_wait_frames < 60
+	):
+		owner_wait_frames += 1
+		await get_tree().process_frame
+
+	if GDSync.get_gdsync_owner(self) != owner_client_id:
+		push_error(
+			"[Player] Ownership mismatch for %s: expected %s, got %s"
+			% [
+				get_path(),
+				owner_client_id,
+				GDSync.get_gdsync_owner(self),
+			]
 		)
 		return
 
@@ -100,9 +129,12 @@ func _initialize_network() -> void:
 
 	ownership_initialized = true
 
-	player_camera.enabled = is_local_player
+	var shared_camera_exists: bool = (
+		get_tree().get_first_node_in_group("game_camera") != null
+	)
+	player_camera.enabled = is_local_player and not shared_camera_exists
 
-	if is_local_player:
+	if player_camera.enabled:
 		player_camera.make_current()
 
 	print(
@@ -113,6 +145,11 @@ func _initialize_network() -> void:
 	)
 
 
+func set_camera_tracking_enabled(enabled: bool) -> void:
+	# Death/respawn systems can call this instead of knowing about GameCam.
+	camera_tracking_enabled = enabled
+
+
 # ═══════════════════════════════════════
 # Visual Synchronization
 # ═══════════════════════════════════════
@@ -120,6 +157,9 @@ func _initialize_network() -> void:
 func _process(_delta: float) -> void:
 	if not ownership_initialized:
 		return
+
+	if current_skin != _applied_skin:
+		apply_skin(current_skin)
 
 	if is_local_player:
 		return
@@ -181,6 +221,7 @@ func apply_skin(skin_name: String) -> void:
 		second_hand.texture = res.hand
 
 	current_skin = skin_name
+	_applied_skin = skin_name
 
 
 # ═══════════════════════════════════════
@@ -191,7 +232,7 @@ func _physics_process(delta: float) -> void:
 	if not ownership_initialized:
 		return
 
-	# Only the local player processes movement.
+	# Only the owning client processes movement.
 	if not is_local_player:
 		return
 

@@ -387,7 +387,7 @@ _data = {
 &"move_right": SubResource("Animation_anuaf")
 }
 
-[node name="base_player" type="CharacterBody2D" unique_id=2015537908]
+[node name="base_player" type="CharacterBody2D" unique_id=2015537908 groups=["players"]]
 script = ExtResource("1_1k8ur")
 
 [node name="first_hand" type="Sprite2D" parent="." unique_id=958348560]
@@ -420,11 +420,12 @@ libraries/ = SubResource("AnimationLibrary_gc6tf")
 [node name="PropertySynchronizer" type="Node" parent="." unique_id=65045921]
 script = ExtResource("3_anuaf")
 broadcast = 2
-refresh_rate = 15
+process = 1
+refresh_rate = 60
 node_path = NodePath("..")
-properties = PackedStringArray("global_position", "velocity", "network_flip_h", "network_animation")
+properties = PackedStringArray("global_position", "network_flip_h", "network_animation", "camera_tracking_enabled", "current_skin")
 interpolated = true
-interpolation_speed = 13.0
+interpolation_speed = 30.0
 extrapolated = false
 max_extrapolation_time = 0.2
 metadata/_custom_type_script = "uid://fcoih1ax5dcs"

@@ -318,8 +318,16 @@ func _on_host_start_pressed() -> void:
 		return
 
 	host_start.disabled = true
-	_show_connecting("Starting game...")
+	_remote_start_game()
+	GDSync.call_func(_remote_start_game)
 
+	# Give every peer a rendered frame for the transition overlay before the
+	# synchronized scene load begins.
+	await get_tree().create_timer(0.15).timeout
+
+	# The match spawns a fixed snapshot of the current lobby members.
+	# Prevent late joins from entering without a corresponding player.
+	GDSync.lobby_close()
 	GDSync.change_scene(GAME_SCENE)
 
 
@@ -329,10 +337,6 @@ func _remote_start_game() -> void:
 	main_section.hide()
 	host_section.hide()
 	client_section.hide()
-
-	await get_tree().create_timer(0.5).timeout
-
-	GDSync.change_scene(GAME_SCENE)
 
 
 # ═══════════════════════════════════════

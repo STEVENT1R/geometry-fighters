@@ -593,10 +593,20 @@ func set_gdsync_owner_remote(node : Node, owner) -> void:
 
 func set_gdsync_owner_delayed(node_path : String, owner) -> void:
 	owner_cache[node_path] = owner
-	
-	await get_tree().process_frame
-	
-	set_from_owner_cache(node_path)
+
+	# Spawn and ownership requests may travel through different request paths.
+	# Keep the newest owner cached until the replicated Node exists instead of
+	# dropping it after a single frame.
+	var frames_waited : int = 0
+	while owner_cache.has(node_path) and frames_waited < 300:
+		var node : Node = get_node_or_null(node_path)
+		if node != null:
+			set_from_owner_cache(node_path)
+			return
+		frames_waited += 1
+		await get_tree().process_frame
+
+	owner_cache.erase(node_path)
 
 func set_from_owner_cache(node_path : String) -> void:
 	if !owner_cache.has(node_path): return

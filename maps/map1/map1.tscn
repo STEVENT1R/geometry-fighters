@@ -3,6 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://kk6ekqsm2ixl" path="res://resources/basics/tilemap/tilemap.tscn" id="1_01wn7"]
 [ext_resource type="PackedScene" uid="uid://jfotokj7wce7" path="res://resources/basics/base_player/base_player.tscn" id="2_rqofp"]
 [ext_resource type="Script" uid="uid://dggiejfjcjjvx" path="res://resources/basics/PlayerSpawner/players_spawner.gd" id="2_vi5q3"]
+[ext_resource type="PackedScene" uid="uid://dcgdlc138kke4" path="res://resources/basics/game_cam/game_cam.tscn" id="4_0t4x3"]
 
 [node name="Map1" type="Node2D" unique_id=1349463397]
 
@@ -25,3 +26,5 @@ position = Vector2(408.65973, 539.57104)
 
 [node name="spawn_point4" type="Marker2D" parent="PlayersSpawner" unique_id=125759232]
 position = Vector2(799.7491, 540.3461)
+
+[node name="GameCam" parent="." unique_id=1710437418 instance=ExtResource("4_0t4x3")]

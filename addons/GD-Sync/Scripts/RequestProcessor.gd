@@ -863,12 +863,11 @@ func call_function(request : Array) -> void:
 	session_controller.end_incoming_request()
 
 func set_gdsync_owner_remote(node_path : String, owner) -> void:
-	if get_tree().current_scene != null:
-		var node : Node = get_node_or_null(node_path)
-		if node == null: return
-		session_controller.set_gdsync_owner_remote(node, owner)
-	else:
+	var node : Node = get_node_or_null(node_path)
+	if node == null:
 		session_controller.set_gdsync_owner_delayed(node_path, owner)
+		return
+	session_controller.set_gdsync_owner_remote(node, owner)
 
 func validate_public_key() -> void:
 	var request : Array = [
