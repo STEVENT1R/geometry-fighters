@@ -12,11 +12,8 @@ region = Rect2(1192, 1192, 48, 48)
 atlas = ExtResource("1_7gm5u")
 region = Rect2(1168, 128, 96, 128)
 
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_anuaf"]
-load_path = "res://.godot/imported/spritesheet_retina.png-9375fc45d57c127e93f023ac4f88d399.ctex"
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_65205"]
-atlas = SubResource("CompressedTexture2D_anuaf")
+atlas = ExtResource("1_7gm5u")
 region = Rect2(1192, 1192, 48, 48)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_sword"]

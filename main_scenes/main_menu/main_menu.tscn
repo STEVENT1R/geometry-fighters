@@ -138,3 +138,4 @@ vertical_alignment = 1
 
 [connection signal="pressed" from="play" to="." method="_on_play_pressed"]
 [connection signal="pressed" from="customize" to="." method="_on_customize_pressed"]
+[connection signal="pressed" from="exit" to="." method="_on_exit_pressed"]

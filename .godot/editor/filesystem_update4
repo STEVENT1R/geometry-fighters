@@ -1,0 +1,10 @@
+res://main_scenes/main_menu/main_menu.tscn
+res://resources/themes/main_theme.tres
+res://addons/GD-Sync/UI/ConfigMenu/GD-Theme.tres
+res://resources/skins/green_rectangle.tres
+res://resources/skins/purple_rectangle.tres
+res://resources/skins/red_rectangle.tres
+res://resources/skins/yellow_rectangle.tres
+res://main_scenes/main_menu/main_menu.gd
+res://resources/basics/player_preview/player_preview.tscn
+res://resources/basics/base_player/base_player.tscn

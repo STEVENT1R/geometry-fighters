@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://f57vcmngbulo"]
 
 [ext_resource type="Texture2D" uid="uid://vfutjs83f67o" path="res://assets/spritesheets/spritesheet_retina.png" id="1_i08y2"]
-[ext_resource type="Script" path="res://resources/basics/player_preview/player_preview.gd" id="2_preview"]
+[ext_resource type="Script" uid="uid://bywcpmvcew8so" path="res://resources/basics/player_preview/player_preview.gd" id="2_preview"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_54gcj"]
 atlas = ExtResource("1_i08y2")
@@ -11,11 +11,8 @@ region = Rect2(1192, 1192, 48, 48)
 atlas = ExtResource("1_i08y2")
 region = Rect2(1168, 128, 96, 128)
 
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_1k8ur"]
-load_path = "res://.godot/imported/spritesheet_retina.png-9375fc45d57c127e93f023ac4f88d399.ctex"
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_4u4f8"]
-atlas = SubResource("CompressedTexture2D_1k8ur")
+atlas = ExtResource("1_i08y2")
 region = Rect2(1192, 1192, 48, 48)
 
 [sub_resource type="Animation" id="Animation_gc6tf"]
