@@ -67,6 +67,10 @@ func _spawn_player(client_id: int, marker: Marker2D) -> void:
 		"current_skin",
 		str(GDSync.player_get_data(client_id, "Skin", "red_rectangle"))
 	)
+	player.set(
+		"display_name",
+		str(GDSync.player_get_data(client_id, "DisplayName", "Player"))
+	)
 	player.global_position = marker.global_position
 	spawned_players[client_id] = player
 

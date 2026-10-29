@@ -45,6 +45,8 @@ var _wall_contact_timer: float = 0.0
 
 @export var current_skin: String = "red_rectangle"
 var _applied_skin: String = ""
+var display_name: String = "Player"
+var _applied_display_name: String = ""
 
 @export_group("Death")
 @export var kill_zone_y: float = 1500.0
@@ -70,6 +72,7 @@ var network_animation: String = "idle"
 @onready var second_hand: Sprite2D = $second_hand
 @onready var player_camera: Camera2D = $Camera2D
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
+@onready var name_label: Label = $name
 
 # ═══════════════════════════════════════
 # Initialization
@@ -77,6 +80,7 @@ var network_animation: String = "idle"
 
 func _ready() -> void:
 	apply_skin(current_skin)
+	_apply_display_name()
 
 	var jump_anim: Animation = movement_animation.get_animation("jump")
 
@@ -205,6 +209,8 @@ func _process(_delta: float) -> void:
 
 	if current_skin != _applied_skin:
 		apply_skin(current_skin)
+	if display_name != _applied_display_name:
+		_apply_display_name()
 
 	if is_dead != _applied_death_state:
 		_apply_death_state()
@@ -270,6 +276,11 @@ func apply_skin(skin_name: String) -> void:
 
 	current_skin = skin_name
 	_applied_skin = skin_name
+
+
+func _apply_display_name() -> void:
+	name_label.text = display_name
+	_applied_display_name = display_name
 
 
 # ═══════════════════════════════════════

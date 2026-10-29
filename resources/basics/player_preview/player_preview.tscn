@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://f57vcmngbulo"]
 
 [ext_resource type="Texture2D" uid="uid://vfutjs83f67o" path="res://assets/spritesheets/spritesheet_retina.png" id="1_i08y2"]
+[ext_resource type="Script" path="res://resources/basics/player_preview/player_preview.gd" id="2_preview"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_54gcj"]
 atlas = ExtResource("1_i08y2")
@@ -383,6 +384,7 @@ _data = {
 }
 
 [node name="player_preview" type="Node2D" unique_id=1929342485]
+script = ExtResource("2_preview")
 
 [node name="first_hand" type="Sprite2D" parent="." unique_id=2022993428]
 position = Vector2(37, -6)

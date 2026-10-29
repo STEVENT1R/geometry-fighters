@@ -423,9 +423,24 @@ broadcast = 2
 process = 1
 refresh_rate = 60
 node_path = NodePath("..")
-properties = PackedStringArray("global_position", "network_flip_h", "network_animation", "camera_tracking_enabled", "current_skin", "is_dead")
+properties = PackedStringArray("global_position", "network_flip_h", "network_animation", "camera_tracking_enabled", "current_skin", "is_dead", "display_name")
 interpolated = true
 interpolation_speed = 30.0
 extrapolated = false
 max_extrapolation_time = 0.2
 metadata/_custom_type_script = "uid://fcoih1ax5dcs"
+
+[node name="name" type="Label" parent="." unique_id=318888492]
+offset_left = -100.0
+offset_top = -80.921
+offset_right = 100.0
+offset_bottom = -48.920998
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.8)
+theme_override_constants/shadow_offset_x = 0
+theme_override_constants/shadow_offset_y = 0
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 22
+text = "Player"
+horizontal_alignment = 1
+vertical_alignment = 1
