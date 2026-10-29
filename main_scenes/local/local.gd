@@ -22,6 +22,7 @@ const GAME_SCENE: String = "res://maps/map1/map1.tscn"
 
 @onready var connecting_screen: ColorRect = $connecting_screen
 @onready var connecting_state: Label = $connecting_screen/connecting_state
+@onready var leave_button: Button = $leave
 
 var my_ready: bool = false
 var in_lobby: bool = false
@@ -29,6 +30,7 @@ var ready_states: Dictionary = {}
 var available_lobbies: Array = []
 var current_lobby_name: String = ""
 var search_timer: Timer
+var is_leaving: bool = false
 
 
 func _ready() -> void:
@@ -350,3 +352,27 @@ func _show_connecting(message: String) -> void:
 
 func _hide_connecting() -> void:
 	connecting_screen.hide()
+
+
+func _on_back_pressed() -> void:
+	if is_leaving:
+		return
+
+	is_leaving = true
+	leave_button.disabled = true
+	search_timer.stop()
+
+	if in_lobby or GDSync.lobby_get_name() != "":
+		_show_connecting("Leaving lobby...")
+		GDSync.lobby_leave()
+		await get_tree().process_frame
+
+	GDSync.stop_multiplayer()
+	NetworkSession.clear_lobby_state()
+	in_lobby = false
+	my_ready = false
+	ready_states.clear()
+	available_lobbies.clear()
+	current_lobby_name = ""
+
+	get_tree().change_scene_to_file("res://main_scenes/main_menu/main_menu.tscn")

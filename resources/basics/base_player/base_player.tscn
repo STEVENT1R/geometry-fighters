@@ -22,6 +22,13 @@ region = Rect2(1192, 1192, 48, 48)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hrq6i"]
 size = Vector2(40.468216, 61.325287)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_sword"]
+atlas = ExtResource("1_7gm5u")
+region = Rect2(768, 1152, 128, 128)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_sword"]
+size = Vector2(34, 86)
+
 [sub_resource type="Animation" id="Animation_gc6tf"]
 length = 0.001
 tracks/0/type = "bezier"
@@ -394,6 +401,7 @@ script = ExtResource("1_1k8ur")
 position = Vector2(37, -6)
 scale = Vector2(0.5, 0.5)
 texture = SubResource("AtlasTexture_8a8pi")
+z_index = 2
 
 [node name="skin" type="Sprite2D" parent="." unique_id=1180797234]
 position = Vector2(0, 27.523926)
@@ -406,6 +414,44 @@ region_rect = Rect2(1176, 0, 80, 128)
 position = Vector2(-39, -6)
 scale = Vector2(0.5, 0.5)
 texture = SubResource("AtlasTexture_65205")
+z_index = 2
+
+[node name="SwordTrail" type="Line2D" parent="."]
+z_index = 1
+width = 13.0
+default_color = Color(0.84, 0.95, 1, 0.55)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="WeaponPivot" type="Node2D" parent="."]
+position = Vector2(37, -6)
+rotation = 0.610865
+z_index = 1
+
+[node name="Sword" type="Sprite2D" parent="WeaponPivot"]
+scale = Vector2(0.68, 0.68)
+texture = SubResource("AtlasTexture_sword")
+offset = Vector2(0, -50)
+
+[node name="GripHand" type="Sprite2D" parent="WeaponPivot"]
+scale = Vector2(0.5, 0.5)
+texture = SubResource("AtlasTexture_8a8pi")
+rotation = -0.13439
+z_index = 1
+
+[node name="SwordHitbox" type="Area2D" parent="WeaponPivot"]
+collision_layer = 0
+collision_mask = 1
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WeaponPivot/SwordHitbox"]
+position = Vector2(0, -47)
+shape = SubResource("RectangleShape2D_sword")
+
+[node name="SwordTip" type="Marker2D" parent="WeaponPivot"]
+position = Vector2(0, -84)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1904013703]
 position = Vector2(0.116241455, -1.4245148)
@@ -423,24 +469,36 @@ broadcast = 2
 process = 1
 refresh_rate = 60
 node_path = NodePath("..")
-properties = PackedStringArray("global_position", "network_flip_h", "network_animation", "camera_tracking_enabled", "current_skin", "is_dead", "display_name")
+properties = PackedStringArray("global_position")
 interpolated = true
 interpolation_speed = 30.0
 extrapolated = false
 max_extrapolation_time = 0.2
 metadata/_custom_type_script = "uid://fcoih1ax5dcs"
 
+[node name="StateSynchronizer" type="Node" parent="."]
+script = ExtResource("3_anuaf")
+broadcast = 2
+process = 1
+refresh_rate = 30
+node_path = NodePath("..")
+reliable = true
+properties = PackedStringArray("network_flip_h", "network_animation", "network_attack_sequence", "camera_tracking_enabled", "current_skin", "is_dead", "health", "display_name")
+interpolated = false
+extrapolated = false
+metadata/_custom_type_script = "uid://fcoih1ax5dcs"
+
 [node name="name" type="Label" parent="." unique_id=318888492]
 offset_left = -100.0
-offset_top = -80.921
+offset_top = -70.91441
 offset_right = 100.0
-offset_bottom = -48.920998
+offset_bottom = -38.914413
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.8)
 theme_override_constants/shadow_offset_x = 0
 theme_override_constants/shadow_offset_y = 0
 theme_override_constants/outline_size = 8
-theme_override_font_sizes/font_size = 22
+theme_override_font_sizes/font_size = 25
 text = "Player"
 horizontal_alignment = 1
 vertical_alignment = 1

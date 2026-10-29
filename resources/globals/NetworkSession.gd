@@ -42,6 +42,10 @@ func _on_client_left(client_id: int) -> void:
 	print("[NetworkSession] Players: ", player_ids)
 
 
+func clear_lobby_state() -> void:
+	player_ids.clear()
+
+
 func _add_player(client_id: int) -> void:
 	if not player_ids.has(client_id):
 		player_ids.append(client_id)

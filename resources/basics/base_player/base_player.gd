@@ -2,6 +2,7 @@
 extends CharacterBody2D
 
 signal died(player: CharacterBody2D)
+signal health_changed(current_health: int, maximum_health: int)
 
 # ═══════════════════════════════════════
 # Movement Constants
@@ -61,6 +62,27 @@ var camera_tracking_enabled: bool = true
 
 var network_flip_h: bool = false
 var network_animation: String = "idle"
+var network_attack_sequence: int = 0
+
+@export_group("Sword Combat")
+@export var max_health: int = 100
+@export var sword_damage: int = 25
+@export var sword_knockback: Vector2 = Vector2(520.0, -260.0)
+@export var sword_attack_duration: float = 0.46
+var health: int = 100
+
+const SWORD_IDLE_ANGLE: float = 35.0
+const SWORD_WINDUP_ANGLE: float = -78.0
+const SWORD_FOLLOW_THROUGH_ANGLE: float = 112.0
+const SWORD_WINDUP_END: float = 0.26
+const SWORD_ACTIVE_END: float = 0.60
+
+var _attack_time: float = 0.0
+var _attack_active: bool = false
+var _attack_can_damage: bool = false
+var _seen_attack_sequence: int = 0
+var _hit_targets: Dictionary = {}
+var _hit_flash_time: float = 0.0
 
 # ═══════════════════════════════════════
 # Nodes
@@ -73,6 +95,11 @@ var network_animation: String = "idle"
 @onready var player_camera: Camera2D = $Camera2D
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
 @onready var name_label: Label = $name
+@onready var weapon_pivot: Node2D = $WeaponPivot
+@onready var weapon_hand: Sprite2D = $WeaponPivot/GripHand
+@onready var sword_hitbox: Area2D = $WeaponPivot/SwordHitbox
+@onready var sword_tip: Marker2D = $WeaponPivot/SwordTip
+@onready var sword_trail: Line2D = $SwordTrail
 
 # ═══════════════════════════════════════
 # Initialization
@@ -81,6 +108,8 @@ var network_animation: String = "idle"
 func _ready() -> void:
 	apply_skin(current_skin)
 	_apply_display_name()
+	health = max_health
+	GDSync.expose_func(_receive_sword_hit)
 
 	var jump_anim: Animation = movement_animation.get_animation("jump")
 
@@ -88,6 +117,7 @@ func _ready() -> void:
 		jump_anim.loop_mode = Animation.LOOP_NONE
 
 	_apply_flip(false)
+	_reset_sword_pose()
 
 	player_camera.enabled = false
 
@@ -168,6 +198,7 @@ func die() -> void:
 	is_dead = true
 	camera_tracking_enabled = false
 	velocity = Vector2.ZERO
+	_cancel_sword_attack()
 	_apply_death_state()
 
 
@@ -175,6 +206,8 @@ func respawn_at(spawn_position: Vector2) -> void:
 	global_position = spawn_position
 	velocity = Vector2.ZERO
 	is_dead = false
+	health = max_health
+	health_changed.emit(health, max_health)
 	camera_tracking_enabled = true
 	_apply_death_state()
 
@@ -203,7 +236,7 @@ func _apply_death_state() -> void:
 # Visual Synchronization
 # ═══════════════════════════════════════
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	if not ownership_initialized:
 		return
 
@@ -214,6 +247,13 @@ func _process(_delta: float) -> void:
 
 	if is_dead != _applied_death_state:
 		_apply_death_state()
+
+	if not is_local_player and network_attack_sequence != _seen_attack_sequence:
+		_seen_attack_sequence = network_attack_sequence
+		_begin_sword_attack(false)
+
+	_update_sword_combat(delta)
+	_update_hit_feedback(delta)
 
 	if is_local_player:
 		return
@@ -228,6 +268,10 @@ func _apply_flip(flip: bool) -> void:
 	skin_sprite.flip_h = flip
 	first_hand.flip_h = flip
 	second_hand.flip_h = flip
+	weapon_pivot.scale.x = -1.0 if flip else 1.0
+	# The animated grip replaces the hand holding the sword.
+	first_hand.visible = flip
+	second_hand.visible = not flip
 
 
 func _play_animation(
@@ -273,6 +317,7 @@ func apply_skin(skin_name: String) -> void:
 	if res.hand:
 		first_hand.texture = res.hand
 		second_hand.texture = res.hand
+		weapon_hand.texture = res.hand
 
 	current_skin = skin_name
 	_applied_skin = skin_name
@@ -281,6 +326,210 @@ func apply_skin(skin_name: String) -> void:
 func _apply_display_name() -> void:
 	name_label.text = display_name
 	_applied_display_name = display_name
+
+
+# Sword Combat
+
+func _begin_sword_attack(from_local_input: bool = true) -> void:
+	if _attack_active or is_dead:
+		return
+
+	_attack_active = true
+	_attack_can_damage = false
+	_attack_time = 0.0
+	_hit_targets.clear()
+	sword_trail.clear_points()
+	sword_trail.modulate.a = 0.0
+
+	if from_local_input:
+		network_attack_sequence += 1
+		_seen_attack_sequence = network_attack_sequence
+
+
+func _cancel_sword_attack() -> void:
+	_attack_active = false
+	_attack_can_damage = false
+	_attack_time = 0.0
+	_hit_targets.clear()
+	sword_trail.clear_points()
+	_reset_sword_pose()
+
+
+func _reset_sword_pose() -> void:
+	if not is_instance_valid(weapon_pivot):
+		return
+	weapon_pivot.rotation = deg_to_rad(SWORD_IDLE_ANGLE)
+	weapon_pivot.position = _weapon_hand_position()
+	weapon_hand.rotation = deg_to_rad(-SWORD_IDLE_ANGLE * 0.22)
+
+
+func _weapon_hand_position() -> Vector2:
+	return second_hand.position if network_flip_h else first_hand.position
+
+
+func _smoothstep(value: float) -> float:
+	var clamped: float = clampf(value, 0.0, 1.0)
+	return clamped * clamped * (3.0 - 2.0 * clamped)
+
+
+func _update_sword_combat(delta: float) -> void:
+	var base_position: Vector2 = _weapon_hand_position()
+
+	if not _attack_active:
+		weapon_pivot.position = base_position
+		weapon_pivot.rotation = lerp_angle(
+			weapon_pivot.rotation,
+			deg_to_rad(SWORD_IDLE_ANGLE),
+			1.0 - exp(-18.0 * delta)
+		)
+		weapon_hand.rotation = lerp_angle(
+			weapon_hand.rotation,
+			deg_to_rad(-SWORD_IDLE_ANGLE * 0.22),
+			1.0 - exp(-18.0 * delta)
+		)
+		sword_trail.modulate.a = move_toward(
+			sword_trail.modulate.a,
+			0.0,
+			delta * 5.0
+		)
+		if sword_trail.modulate.a <= 0.01:
+			sword_trail.clear_points()
+		return
+
+	_attack_time += delta
+	var progress: float = clampf(
+		_attack_time / maxf(sword_attack_duration, 0.01),
+		0.0,
+		1.0
+	)
+	var angle_degrees: float
+	var hand_offset: Vector2
+
+	if progress < SWORD_WINDUP_END:
+		var phase: float = _smoothstep(progress / SWORD_WINDUP_END)
+		angle_degrees = lerpf(
+			SWORD_IDLE_ANGLE,
+			SWORD_WINDUP_ANGLE,
+			phase
+		)
+		hand_offset = Vector2(-10.0, -7.0) * phase
+		_attack_can_damage = false
+	elif progress < SWORD_ACTIVE_END:
+		var phase: float = _smoothstep(
+			(progress - SWORD_WINDUP_END)
+			/ (SWORD_ACTIVE_END - SWORD_WINDUP_END)
+		)
+		angle_degrees = lerpf(
+			SWORD_WINDUP_ANGLE,
+			SWORD_FOLLOW_THROUGH_ANGLE,
+			phase
+		)
+		hand_offset = Vector2(
+			lerpf(-10.0, 16.0, phase),
+			lerpf(-7.0, 9.0, phase)
+		)
+		_attack_can_damage = phase > 0.12 and phase < 0.92
+	else:
+		var phase: float = _smoothstep(
+			(progress - SWORD_ACTIVE_END)
+			/ (1.0 - SWORD_ACTIVE_END)
+		)
+		angle_degrees = lerpf(
+			SWORD_FOLLOW_THROUGH_ANGLE,
+			SWORD_IDLE_ANGLE,
+			phase
+		)
+		hand_offset = Vector2(16.0, 9.0).lerp(Vector2.ZERO, phase)
+		_attack_can_damage = false
+
+	weapon_pivot.position = base_position + hand_offset
+	weapon_pivot.rotation = deg_to_rad(angle_degrees)
+	weapon_hand.rotation = deg_to_rad(-angle_degrees * 0.22)
+
+	if _attack_can_damage:
+		_update_sword_trail()
+		if is_local_player:
+			_check_sword_hits()
+	else:
+		sword_trail.modulate.a = move_toward(
+			sword_trail.modulate.a,
+			0.0,
+			delta * 2.8
+		)
+
+	if progress >= 1.0:
+		_attack_active = false
+		_attack_can_damage = false
+
+
+func _update_sword_trail() -> void:
+	sword_trail.modulate.a = 0.72
+	sword_trail.add_point(to_local(sword_tip.global_position))
+	while sword_trail.get_point_count() > 8:
+		sword_trail.remove_point(0)
+
+
+func _check_sword_hits() -> void:
+	for body: Node2D in sword_hitbox.get_overlapping_bodies():
+		if body == self or not body.has_method("_receive_sword_hit"):
+			continue
+
+		var target_key: int = body.get_instance_id()
+		if _hit_targets.has(target_key):
+			continue
+		_hit_targets[target_key] = true
+
+		var direction: float = -1.0 if network_flip_h else 1.0
+		var knockback := Vector2(
+			sword_knockback.x * direction,
+			sword_knockback.y
+		)
+		var target_owner: int = body.get("owner_client_id")
+
+		if target_owner == GDSync.get_client_id():
+			body.call(
+				"_receive_sword_hit",
+				owner_client_id,
+				sword_damage,
+				knockback
+			)
+		elif target_owner != -1:
+			GDSync.call_func_on(
+				target_owner,
+				Callable(body, "_receive_sword_hit"),
+				owner_client_id,
+				sword_damage,
+				knockback
+			)
+
+
+func _receive_sword_hit(
+	attacker_client_id: int,
+	damage: int,
+	knockback: Vector2
+) -> void:
+	if not is_local_player or is_dead:
+		return
+
+	var sender_id: int = GDSync.get_sender_id()
+	if sender_id != -1 and sender_id != attacker_client_id:
+		return
+
+	health = maxi(health - maxi(damage, 0), 0)
+	velocity = knockback
+	_hit_flash_time = 0.13
+	health_changed.emit(health, max_health)
+
+	if health <= 0:
+		die()
+
+
+func _update_hit_feedback(delta: float) -> void:
+	if _hit_flash_time > 0.0:
+		_hit_flash_time -= delta
+		modulate = Color(1.0, 0.48, 0.48, 1.0)
+	else:
+		modulate = Color.WHITE
 
 
 # ═══════════════════════════════════════
@@ -299,6 +548,9 @@ func _physics_process(delta: float) -> void:
 		"ui_left",
 		"ui_right"
 	)
+
+	if Input.is_action_just_pressed("attack"):
+		_begin_sword_attack()
 
 	# ─────────────────────────────────────
 	# 1. Gravity
