@@ -1,7 +1,6 @@
 Godot Engine v4.8.dev7.official.c971f93e7 - https://godotengine.org
+OpenGL API 3.3.0 NVIDIA 354.13 - Compatibility - Using Device: NVIDIA - Quadro 600
 
-ERROR: Failed to read the root certificate store.
-   at: get_system_ca_certificates (platform/windows/os_windows.cpp:2618)
 ERROR: Can't send message. No active debugger
    at: send_message (core/core_bind.cpp:2242)
    GDScript backtrace (most recent call first):

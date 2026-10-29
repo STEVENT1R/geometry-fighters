@@ -15,14 +15,14 @@ version="1.0.2"
 [application]
 
 config/name="Geometry Fighters"
-run/main_scene="uid://2lhbvxrognu4"
+run/main_scene="res://main_scenes/main_menu/main_menu.tscn"
 config/features=PackedStringArray("4.8", "GL Compatibility")
 config/icon="uid://o84d5us6ahc2"
 
 [autoload]
 
 GDSync="*res://addons/GD-Sync/MultiplayerClient.gd"
-NetworkSession="*uid://cbklcw0ect75v"
+NetworkSession="*res://resources/globals/NetworkSession.gd"
 
 [display]
 
@@ -49,8 +49,8 @@ folder_colors={
 [gui]
 
 common/auto_focus_strategy=1
-theme/custom="uid://dx882i3m23ld2"
-theme/custom_font="uid://cd8fmrfkhtbdi"
+theme/custom="res://resources/themes/main_theme.tres"
+theme/custom_font="res://Lakeside_Castle.ttf"
 
 [input]
 

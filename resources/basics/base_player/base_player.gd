@@ -69,20 +69,27 @@ var network_attack_sequence: int = 0
 @export var sword_damage: int = 25
 @export var sword_knockback: Vector2 = Vector2(520.0, -260.0)
 @export var sword_attack_duration: float = 0.46
+@export var sword_combo_window: float = 0.34
+@export var finisher_damage_multiplier: float = 1.45
+@export var finisher_knockback_multiplier: float = 1.35
 var health: int = 100
 
 const SWORD_IDLE_ANGLE: float = 35.0
-const SWORD_WINDUP_ANGLE: float = -78.0
-const SWORD_FOLLOW_THROUGH_ANGLE: float = 112.0
 const SWORD_WINDUP_END: float = 0.26
 const SWORD_ACTIVE_END: float = 0.60
+const SWORD_COMBO_COUNT: int = 3
 
 var _attack_time: float = 0.0
 var _attack_active: bool = false
 var _attack_can_damage: bool = false
+var _attack_facing_left: bool = false
+var _attack_serial: int = 0
 var _seen_attack_sequence: int = 0
 var _hit_targets: Dictionary = {}
 var _hit_flash_time: float = 0.0
+var _combo_step: int = 0
+var _queued_combo_attacks: int = 0
+var _combo_reset_left: float = 0.0
 
 # ═══════════════════════════════════════
 # Nodes
@@ -96,6 +103,7 @@ var _hit_flash_time: float = 0.0
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
 @onready var name_label: Label = $name
 @onready var weapon_pivot: Node2D = $WeaponPivot
+@onready var sword_sprite: Sprite2D = $WeaponPivot/Sword
 @onready var weapon_hand: Sprite2D = $WeaponPivot/GripHand
 @onready var sword_hitbox: Area2D = $WeaponPivot/SwordHitbox
 @onready var sword_tip: Marker2D = $WeaponPivot/SwordTip
@@ -250,7 +258,12 @@ func _process(delta: float) -> void:
 
 	if not is_local_player and network_attack_sequence != _seen_attack_sequence:
 		_seen_attack_sequence = network_attack_sequence
-		_begin_sword_attack(false)
+		var remote_combo_step: int = clampi(
+			network_attack_sequence % 10,
+			1,
+			SWORD_COMBO_COUNT
+		)
+		_begin_sword_attack(false, remote_combo_step)
 
 	_update_sword_combat(delta)
 	_update_hit_feedback(delta)
@@ -268,7 +281,11 @@ func _apply_flip(flip: bool) -> void:
 	skin_sprite.flip_h = flip
 	first_hand.flip_h = flip
 	second_hand.flip_h = flip
-	weapon_pivot.scale.x = -1.0 if flip else 1.0
+	# Mirror the swing angle instead of scaling the pivot. Scaling a vertical
+	# sword mirrors its artwork, but leaves the rotated attack arc unchanged.
+	weapon_pivot.scale = Vector2.ONE
+	sword_sprite.flip_h = flip
+	weapon_hand.flip_h = flip
 	# The animated grip replaces the hand holding the sword.
 	first_hand.visible = flip
 	second_hand.visible = not flip
@@ -330,10 +347,38 @@ func _apply_display_name() -> void:
 
 # Sword Combat
 
-func _begin_sword_attack(from_local_input: bool = true) -> void:
-	if _attack_active or is_dead:
+func _queue_sword_attack() -> void:
+	if is_dead:
 		return
 
+	if _attack_active:
+		var remaining_attacks: int = SWORD_COMBO_COUNT - _combo_step
+		_queued_combo_attacks = mini(
+			_queued_combo_attacks + 1,
+			remaining_attacks
+		)
+		return
+
+	if _combo_reset_left > 0.0 and _combo_step < SWORD_COMBO_COUNT:
+		_combo_step += 1
+	else:
+		_combo_step = 1
+
+	_begin_sword_attack(true, _combo_step)
+
+
+func _begin_sword_attack(
+	from_local_input: bool = true,
+	combo_step: int = 1
+) -> void:
+	if is_dead:
+		return
+	if from_local_input and _attack_active:
+		return
+
+	_combo_step = clampi(combo_step, 1, SWORD_COMBO_COUNT)
+	_combo_reset_left = 0.0
+	_attack_facing_left = network_flip_h
 	_attack_active = true
 	_attack_can_damage = false
 	_attack_time = 0.0
@@ -342,7 +387,8 @@ func _begin_sword_attack(from_local_input: bool = true) -> void:
 	sword_trail.modulate.a = 0.0
 
 	if from_local_input:
-		network_attack_sequence += 1
+		_attack_serial += 1
+		network_attack_sequence = _attack_serial * 10 + _combo_step
 		_seen_attack_sequence = network_attack_sequence
 
 
@@ -350,6 +396,9 @@ func _cancel_sword_attack() -> void:
 	_attack_active = false
 	_attack_can_damage = false
 	_attack_time = 0.0
+	_combo_step = 0
+	_queued_combo_attacks = 0
+	_combo_reset_left = 0.0
 	_hit_targets.clear()
 	sword_trail.clear_points()
 	_reset_sword_pose()
@@ -358,13 +407,20 @@ func _cancel_sword_attack() -> void:
 func _reset_sword_pose() -> void:
 	if not is_instance_valid(weapon_pivot):
 		return
-	weapon_pivot.rotation = deg_to_rad(SWORD_IDLE_ANGLE)
+	var facing_sign: float = -1.0 if network_flip_h else 1.0
+	weapon_pivot.rotation = deg_to_rad(SWORD_IDLE_ANGLE * facing_sign)
 	weapon_pivot.position = _weapon_hand_position()
-	weapon_hand.rotation = deg_to_rad(-SWORD_IDLE_ANGLE * 0.22)
+	weapon_hand.rotation = deg_to_rad(
+		-SWORD_IDLE_ANGLE * 0.22 * facing_sign
+	)
+
+
+func _weapon_facing_left() -> bool:
+	return _attack_facing_left if _attack_active else network_flip_h
 
 
 func _weapon_hand_position() -> Vector2:
-	return second_hand.position if network_flip_h else first_hand.position
+	return second_hand.position if _weapon_facing_left() else first_hand.position
 
 
 func _smoothstep(value: float) -> float:
@@ -372,19 +428,57 @@ func _smoothstep(value: float) -> float:
 	return clamped * clamped * (3.0 - 2.0 * clamped)
 
 
+func _combo_angles() -> Vector3:
+	match _combo_step:
+		2:
+			return Vector3(SWORD_IDLE_ANGLE, 118.0, -82.0)
+		3:
+			return Vector3(SWORD_IDLE_ANGLE, -142.0, 128.0)
+		_:
+			return Vector3(SWORD_IDLE_ANGLE, -78.0, 112.0)
+
+
+func _combo_hand_offsets() -> Array[Vector2]:
+	match _combo_step:
+		2:
+			return [Vector2(10.0, -8.0), Vector2(-16.0, 8.0)]
+		3:
+			return [Vector2(-14.0, -18.0), Vector2(22.0, 15.0)]
+		_:
+			return [Vector2(-10.0, -7.0), Vector2(16.0, 9.0)]
+
+
+func _current_attack_duration() -> float:
+	match _combo_step:
+		2:
+			return sword_attack_duration * 0.92
+		3:
+			return sword_attack_duration * 1.20
+		_:
+			return sword_attack_duration
+
+
 func _update_sword_combat(delta: float) -> void:
 	var base_position: Vector2 = _weapon_hand_position()
+	var facing_left: bool = _weapon_facing_left()
+	var facing_sign: float = -1.0 if facing_left else 1.0
 
 	if not _attack_active:
+		if _combo_reset_left > 0.0:
+			_combo_reset_left = maxf(_combo_reset_left - delta, 0.0)
+			if _combo_reset_left <= 0.0:
+				_combo_step = 0
+				_queued_combo_attacks = 0
+
 		weapon_pivot.position = base_position
 		weapon_pivot.rotation = lerp_angle(
 			weapon_pivot.rotation,
-			deg_to_rad(SWORD_IDLE_ANGLE),
+			deg_to_rad(SWORD_IDLE_ANGLE * facing_sign),
 			1.0 - exp(-18.0 * delta)
 		)
 		weapon_hand.rotation = lerp_angle(
 			weapon_hand.rotation,
-			deg_to_rad(-SWORD_IDLE_ANGLE * 0.22),
+			deg_to_rad(-SWORD_IDLE_ANGLE * 0.22 * facing_sign),
 			1.0 - exp(-18.0 * delta)
 		)
 		sword_trail.modulate.a = move_toward(
@@ -398,21 +492,28 @@ func _update_sword_combat(delta: float) -> void:
 
 	_attack_time += delta
 	var progress: float = clampf(
-		_attack_time / maxf(sword_attack_duration, 0.01),
+		_attack_time / maxf(_current_attack_duration(), 0.01),
 		0.0,
 		1.0
 	)
+	var combo_angles: Vector3 = _combo_angles()
+	var combo_offsets: Array[Vector2] = _combo_hand_offsets()
+	var start_angle: float = combo_angles.x
+	var windup_angle: float = combo_angles.y
+	var follow_through_angle: float = combo_angles.z
+	var windup_offset: Vector2 = combo_offsets[0]
+	var follow_through_offset: Vector2 = combo_offsets[1]
 	var angle_degrees: float
 	var hand_offset: Vector2
 
 	if progress < SWORD_WINDUP_END:
 		var phase: float = _smoothstep(progress / SWORD_WINDUP_END)
 		angle_degrees = lerpf(
-			SWORD_IDLE_ANGLE,
-			SWORD_WINDUP_ANGLE,
+			start_angle,
+			windup_angle,
 			phase
 		)
-		hand_offset = Vector2(-10.0, -7.0) * phase
+		hand_offset = windup_offset * phase
 		_attack_can_damage = false
 	elif progress < SWORD_ACTIVE_END:
 		var phase: float = _smoothstep(
@@ -420,14 +521,11 @@ func _update_sword_combat(delta: float) -> void:
 			/ (SWORD_ACTIVE_END - SWORD_WINDUP_END)
 		)
 		angle_degrees = lerpf(
-			SWORD_WINDUP_ANGLE,
-			SWORD_FOLLOW_THROUGH_ANGLE,
+			windup_angle,
+			follow_through_angle,
 			phase
 		)
-		hand_offset = Vector2(
-			lerpf(-10.0, 16.0, phase),
-			lerpf(-7.0, 9.0, phase)
-		)
+		hand_offset = windup_offset.lerp(follow_through_offset, phase)
 		_attack_can_damage = phase > 0.12 and phase < 0.92
 	else:
 		var phase: float = _smoothstep(
@@ -435,16 +533,23 @@ func _update_sword_combat(delta: float) -> void:
 			/ (1.0 - SWORD_ACTIVE_END)
 		)
 		angle_degrees = lerpf(
-			SWORD_FOLLOW_THROUGH_ANGLE,
+			follow_through_angle,
 			SWORD_IDLE_ANGLE,
 			phase
 		)
-		hand_offset = Vector2(16.0, 9.0).lerp(Vector2.ZERO, phase)
+		hand_offset = follow_through_offset.lerp(Vector2.ZERO, phase)
 		_attack_can_damage = false
 
+	# WeaponPivot's children are mirrored for left-facing attacks. Mirror the
+	# procedural hand travel too, otherwise the grip moves away from the body.
+	if facing_left:
+		hand_offset.x *= -1.0
+
 	weapon_pivot.position = base_position + hand_offset
-	weapon_pivot.rotation = deg_to_rad(angle_degrees)
-	weapon_hand.rotation = deg_to_rad(-angle_degrees * 0.22)
+	weapon_pivot.rotation = deg_to_rad(angle_degrees * facing_sign)
+	weapon_hand.rotation = deg_to_rad(
+		-angle_degrees * 0.22 * facing_sign
+	)
 
 	if _attack_can_damage:
 		_update_sword_trail()
@@ -460,6 +565,14 @@ func _update_sword_combat(delta: float) -> void:
 	if progress >= 1.0:
 		_attack_active = false
 		_attack_can_damage = false
+		_combo_reset_left = sword_combo_window
+
+		if is_local_player and _queued_combo_attacks > 0 and _combo_step < SWORD_COMBO_COUNT:
+			_queued_combo_attacks -= 1
+			_combo_step += 1
+			_begin_sword_attack(true, _combo_step)
+		elif _combo_step >= SWORD_COMBO_COUNT:
+			_queued_combo_attacks = 0
 
 
 func _update_sword_trail() -> void:
@@ -479,10 +592,15 @@ func _check_sword_hits() -> void:
 			continue
 		_hit_targets[target_key] = true
 
-		var direction: float = -1.0 if network_flip_h else 1.0
+		var direction: float = -1.0 if _attack_facing_left else 1.0
+		var damage: int = sword_damage
+		var knockback_multiplier: float = 1.0
+		if _combo_step == SWORD_COMBO_COUNT:
+			damage = roundi(sword_damage * finisher_damage_multiplier)
+			knockback_multiplier = finisher_knockback_multiplier
 		var knockback := Vector2(
-			sword_knockback.x * direction,
-			sword_knockback.y
+			sword_knockback.x * direction * knockback_multiplier,
+			sword_knockback.y * knockback_multiplier
 		)
 		var target_owner: int = body.get("owner_client_id")
 
@@ -490,30 +608,34 @@ func _check_sword_hits() -> void:
 			body.call(
 				"_receive_sword_hit",
 				owner_client_id,
-				sword_damage,
-				knockback
+				damage,
+				knockback,
+				false
 			)
 		elif target_owner != -1:
 			GDSync.call_func_on(
 				target_owner,
 				Callable(body, "_receive_sword_hit"),
 				owner_client_id,
-				sword_damage,
-				knockback
+				damage,
+				knockback,
+				true
 			)
 
 
 func _receive_sword_hit(
 	attacker_client_id: int,
 	damage: int,
-	knockback: Vector2
+	knockback: Vector2,
+	validate_sender: bool = true
 ) -> void:
 	if not is_local_player or is_dead:
 		return
 
-	var sender_id: int = GDSync.get_sender_id()
-	if sender_id != -1 and sender_id != attacker_client_id:
-		return
+	if validate_sender:
+		var sender_id: int = GDSync.get_sender_id()
+		if sender_id != attacker_client_id:
+			return
 
 	health = maxi(health - maxi(damage, 0), 0)
 	velocity = knockback
@@ -550,7 +672,7 @@ func _physics_process(delta: float) -> void:
 	)
 
 	if Input.is_action_just_pressed("attack"):
-		_begin_sword_attack()
+		_queue_sword_attack()
 
 	# ─────────────────────────────────────
 	# 1. Gravity
@@ -661,7 +783,11 @@ func _physics_process(delta: float) -> void:
 
 	var flip: bool = network_flip_h
 
-	if _wall_contact_timer > 0.0:
+	if _attack_active:
+		# Keep the entire attack on its starting side. Turning input is applied
+		# after recovery instead of snapping the sword through the body.
+		flip = _attack_facing_left
+	elif _wall_contact_timer > 0.0:
 		flip = _last_wall_normal < 0.0
 	elif direction != 0.0:
 		flip = direction < 0.0

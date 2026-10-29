@@ -9,7 +9,8 @@ func _ready() -> void:
 	attacker.current_skin = "red_rectangle"
 	attacker.ownership_initialized = true
 	attacker.is_local_player = false
-	attacker.network_attack_sequence = 1
+	attacker.network_flip_h = true
+	attacker.network_attack_sequence = 13
 
 	target.display_name = "TARGET"
 	target.current_skin = "purple_rectangle"
@@ -19,5 +20,5 @@ func _ready() -> void:
 	await get_tree().create_timer(0.225).timeout
 	await RenderingServer.frame_post_draw
 	var image: Image = get_viewport().get_texture().get_image()
-	image.save_png("res://sword_combat_preview.png")
+	image.save_png("res://sword_combo_left_fixed_preview.png")
 	get_tree().quit()

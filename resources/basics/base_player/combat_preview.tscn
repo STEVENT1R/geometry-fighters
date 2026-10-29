@@ -22,7 +22,7 @@ theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.8)
 theme_override_constants/shadow_offset_x = 3
 theme_override_constants/shadow_offset_y = 3
 theme_override_font_sizes/font_size = 34
-text = "SWORD COMBAT - ACTIVE SLASH"
+text = "SWORD COMBAT - 3 HIT FINISHER"
 
 [node name="Hint" type="Label" parent="."]
 offset_left = 66.0
@@ -31,7 +31,7 @@ offset_right = 720.0
 offset_bottom = 143.0
 theme_override_colors/font_color = Color(0.62, 0.7, 0.8, 1)
 theme_override_font_sizes/font_size = 18
-text = "Left Mouse / J   |   Wind-up > Active hit > Smooth recovery"
+text = "Left Mouse / J   |   Slash > Reverse slash > Heavy finisher"
 
 [node name="Ground" type="Polygon2D" parent="."]
 polygon = PackedVector2Array(0, 520, 1280, 520, 1280, 720, 0, 720)
